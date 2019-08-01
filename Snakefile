@@ -4,6 +4,12 @@ from os.path import basename
 
 import re
 
+## JH: in future hardcode paths to human GTF and Genome for hg38
+#HUMAN_GTF=""
+#HUMAN_GENOME=""
+
+shell.prefix("ml kallisto/0.45.0")
+
 rule all:
     input:
         HUMAN_GTF,
@@ -17,7 +23,7 @@ rule all:
 
         # XXX: this will break right here
         # need to run `src/annotate_gtf.R` after running the stuff above
-        expand(GEUVADIS_DATA + '/results/kma/{sample}_genome/pseudoalignments.bam',
+        expand(OUTFOLDER + '/results/kma/{sample}_genome/pseudoalignments.bam',
             sample = GEUVADIS_FILES),
 
 rule get_human_gtf:
@@ -93,12 +99,13 @@ rule kallisto_quant:
     benchmark:
         'benchmark/kallisto/{sample}.json'
     input:
-        GEUVADIS_DATA + '/rna/{sample}/{sample}_1.fastq.gz',
-        GEUVADIS_DATA + '/rna/{sample}/{sample}_2.fastq.gz',
+	#JH - make this more general
+        OUTFOLDER + '/fastq/{sample}_1.fastq.gz',
+        OUTFOLDER + '/fastq/{sample}_2.fastq.gz',
         HUMAN_KALLISTO_INDEX
     output:
-        GEUVADIS_DATA + '/results/kma/{sample}',
-        GEUVADIS_DATA + '/results/kma/{sample}/abundance.h5'
+        OUTFOLDER + '/results/kma/{sample}',
+        OUTFOLDER + '/results/kma/{sample}/abundance.h5'
     threads: 5
     shell:
         'kallisto quant'
@@ -111,13 +118,13 @@ rule kallisto_genome:
     benchmark:
         'benchmark/kallisto_genome/{sample}.json'
     input:
-        GEUVADIS_DATA + '/rna/{sample}/{sample}_1.fastq.gz',
-        GEUVADIS_DATA + '/rna/{sample}/{sample}_2.fastq.gz',
+        OUTFOLDER + '/fastq/{sample}_1.fastq.gz',
+        OUTFOLDER + '/fastq/{sample}_2.fastq.gz',
         HUMAN_KALLISTO_INDEX
     output:
-        GEUVADIS_DATA + '/results/kma/{sample}_genome',
-        GEUVADIS_DATA + '/results/kma/{sample}_genome/abundance.h5',
-        GEUVADIS_DATA + '/results/kma/{sample}_genome/pseudoalignments.bam'
+        OUTFOLDER + '/results/kma/{sample}_genome',
+        OUTFOLDER + '/results/kma/{sample}_genome/abundance.h5',
+        OUTFOLDER + '/results/kma/{sample}_genome/pseudoalignments.bam'
     threads: 5
     shell:
         'kallisto quant'

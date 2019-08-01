@@ -1,11 +1,24 @@
 # the following must be set by the user
-BASE = '/home/users/hjp/intron-retention'
-GEUVADIS_DATA = '/scratch/PI/pritch/geuvadis'
+#BASE = '/home/users/hjp/intron-retention'
+
+# where the indexes will go#
+#BASE = '/hpc/users/humphj04/software/kallisto_kma'
+BASE = '/sc/orga/projects/ad-omics/data/references/hg19_reference/kallisto_kma'
+
+#GEUVADIS_DATA = '/scratch/PI/pritch/geuvadis'
+## now OUTFOLDER - path to folder + /fastq/
+## assumes fastq names are {sample}_1.fastq.gz and {sample}_2.fastq.gz
+OUTFOLDER = ""
+
 
 ## software
 
-IR_BASE = '/home/users/hjp/kma/inst/pre-process'
-FASTQTL = 'module load gsl/1.16 && /home/users/hjp/software/FastQTL/bin/fastQTL.static'
+#IR_BASE = '/home/users/hjp/kma/inst/pre-process'
+IR_BASE = '/hpc/users/humphj04/software/kallisto_kma/src'
+
+#FASTQTL = 'module load gsl/1.16 && /home/users/hjp/software/FastQTL/bin/fastQTL.static'
+
+
 
 # end customizations
 

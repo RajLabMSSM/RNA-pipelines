@@ -1,4 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 48 of /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile:
-Missing input files for rule normalise_genes:
-/sc/orga/projects/als-omics/RAPiD/CGND-HRA-01238/gene_matrix.RData

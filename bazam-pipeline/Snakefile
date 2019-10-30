@@ -1,0 +1,41 @@
+# snakemake pipeline for converting BAMs to FASTQs
+# Jack Humphrey
+#
+
+#import pandas as pd
+#samples = pd.read_csv(metadata, sep = '\t')['sample']
+
+shell.prefix('export PS1="";source activate bazam-pipeline;')
+
+inFolder = config['inFolder']
+outFolder = config['outFolder']
+
+bamSuffix = config['bamSuffix']
+
+# get BAM files from inFolder using glob
+import glob
+import os
+samples = [os.path.basename(x).strip(bamSuffix) for x in glob.glob(inFolder + "/*" + bamSuffix)]
+
+
+print(samples)
+print(bamSuffix)
+
+rule all:
+	input: 
+		expand('{outFolder}/{sample}.R{pair}.fastq.gz', outFolder = outFolder, sample = samples, pair = [1,2])
+
+rule bazam:
+	input:
+		bam = inFolder + '/{sample}' + bamSuffix
+	output:
+		r1_fastq_gz = outFolder + '/{sample}.R1.fastq.gz',
+		r2_fastq_gz = outFolder + '/{sample}.R2.fastq.gz'
+	params:
+		r1_fastq = outFolder + '/{sample}.R1.fastq',
+		r2_fastq = outFolder + '/{sample}.R2.fastq'
+	shell:
+		"bazam -bam {input.bam} -r1 {params.r1_fastq} -r2 {params.r2_fastq};"
+		"gzip {params.r1_fastq};"
+		"gzip {params.r2_fastq}"
+

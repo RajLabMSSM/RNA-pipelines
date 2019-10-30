@@ -19,3 +19,4 @@ Each pipeline has:
 
 *qSVA-pipeline* - run qSVA to find RNA quality-associated surrogate variables (qSVs)
 
+*kallisto-pipeline* - experimental workflows for generating custom kallisto indexes and running kallisto on lots of samples

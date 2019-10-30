@@ -1,0 +1,131 @@
+import pandas as pd
+import os
+RWD = os.getcwd()
+#inFolder = config['inFolder']
+# create outFolder path using dataCode
+#outFolder = config['outFolder'] + config['dataCode'] + '/'
+
+refCondition = config['refCondition']
+altCondition = config['altCondition']
+
+outFolder = config['outFolder']
+dataCode = config['dataCode']
+# annotation
+#refFolder = config['refFolder']
+#refFile = config['refFile']
+#refCode = config['refCode']
+
+rapidVersion = config['rapidVersion']
+
+metadata = config['metadata']
+#bamSuffix = config['bamSuffix']
+
+meta = pd.read_csv(metadata, sep = "\t")
+
+samples = meta['sample']
+
+# put together file paths
+kallisto_counts = meta['rapid_path'] + "/Processed/" + rapidVersion + "/kallisto/abundance.h5"
+
+# allow for choosing of modules
+modules = config['modules']
+target_files = [ outFolder + "config.yaml", metadata ]
+
+
+
+kallisto_out = outFolder + "kallisto_sleuth/" + dataCode + "_results.RData"
+target_files.append(kallisto_out)
+
+localrules: copyConfig
+
+rule all:
+	input:
+		target_files
+
+rule copyConfig:
+	input:
+		config = workflow.overwrite_configfile,
+		metadata = metadata
+
+	output:
+		config = outFolder + "config.yaml",
+		metadata = outFolder + "samples.tsv"
+	shell:
+		"cp {input.config} {output.config};"
+		"cp {input.metadata} {output.metadata}"
+
+rule kallisto_index:
+	input:
+		transcripts + ".fa"
+	output:
+		transcripts + ".index"
+	shell:
+		"kallisto index -i {output} {input}"
+
+rule kallisto_quant:
+	input:
+		fastq = inFolder + sample + ".fastq", 
+		index = transcripts + ".index"
+	output:
+		outFolder + sample + "/abundances.h5"
+	shell:
+		"kallisto quant "
+		" -i {input.index} "
+		" --bootstrap-samples=100 "
+		" {stranded} "		
+		" -o {outFolder}/{sample}/ "
+		" {input.fastq} "
+rule sleuth:
+	input:
+		expand( "{kallisto_count_files}", kallisto_count_files = kallisto_counts)
+	output:
+		outFolder + "sleuth/" + dataCode + "_results.RData"
+	params:
+		t2g = "/sc/orga/projects/PBG/REFERENCES/GRCh38/Gencode/release_30/gencode.v30.primary_assembly.transcript_id.gene_name",
+		outFolder = outFolder + "sleuth/",
+                dataCode = dataCode,
+                metadata = metadata,
+                refCondition = refCondition,
+                altCondition = altCondition,
+		rapidVersion = rapidVersion
+	shell:
+                "ml R/3.6.0;"
+                "Rscript ../scripts/kallisto_sleuth.R "
+		" --rapidVersion {params.rapidVersion} "
+		" --t2g {params.t2g} "
+                " --metadata {params.metadata} "
+                " --outFolder {params.outFolder} "
+                " --dataCode {params.dataCode} "
+                " --refCondition {params.refCondition} "
+                " --altCondition {params.altCondition} "
+                " {input} "
+
+rule differential_report:
+	input:
+		outFolder + "sleuth/" + dataCode + "_results.RData",
+	output:
+		outFolder + "report/" + dataCode + "_sleuth_report.html"
+	params:
+		script = "scripts/differential_report.Rmd",
+		sleuth_folder = outFolder + "sleuth/",
+		output_dir = outFolder + "report/",
+		dataCode = dataCode,
+		rwd = RWD,
+		metadata = metadata,
+		refCondition = refCondition,
+		altCondition = altCondition,
+		FDR = 0.05 # put in config.yaml
+	shell: """
+ml R/3.6.0; R -e 'rmarkdown::render(\
+"{params.script}", clean = TRUE, \
+output_file = "{output}", \
+output_dir = "{params.output_dir}", \
+params = list(rwd = "{params.rwd}", \
+FDR = "{params.FDR}", \
+sleuth_folder = "{params.sleuth_folder}", \
+dataCode = "{params.dataCode}", \
+metadata = "{params.metadata}", \
+refCondition = "{params.refCondition}", \
+altCondition = "{params.altCondition}" \
+))' --slave
+		"""

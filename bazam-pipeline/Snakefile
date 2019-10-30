@@ -25,9 +25,18 @@ rule all:
 	input: 
 		expand('{outFolder}/{sample}.R{pair}.fastq.gz', outFolder = outFolder, sample = samples, pair = [1,2])
 
+rule indexBam:
+	input: 
+		bam = inFolder + '/{sample}' + bamSuffix
+	output:
+		bai = inFolder + '/{sample}' + bamSuffix + ".bai"
+	shell:
+		"ml samtools;samtools index {input.bam}"
+
 rule bazam:
 	input:
-		bam = inFolder + '/{sample}' + bamSuffix
+		bam = inFolder + '/{sample}' + bamSuffix,
+		bai = inFolder + '/{sample}' + bamSuffix + ".bai"
 	output:
 		r1_fastq_gz = outFolder + '/{sample}.R1.fastq.gz',
 		r2_fastq_gz = outFolder + '/{sample}.R2.fastq.gz'

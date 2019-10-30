@@ -1,5 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 29 of /hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile:
-Missing input files for rule createDegradationMatrix:
-input/test.bam.bai
-input/test.bam

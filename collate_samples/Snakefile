@@ -2,13 +2,13 @@
 # Snakemake pipeline for combining data from multiple samples together
 
 # where the scripts are - default within the pipeline folder
-scriptFolder = "/sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/scripts/"
+scriptFolder = "scripts/"
 
 # where your RAPiD run is
-inFolder = "/sc/orga/projects/als-omics/RAPiD/"
+inFolder = config['inFolder']
 
 # where you want the output tables to go
-outFolder = "/sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_"
+outFolder = config['outFolder']
 
 # for testing - two samples:
 #inFolder = "/sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/test"
@@ -30,12 +30,12 @@ rule getMatrices:
 		outFolder + "gene_matrix.RData",
 		outFolder + "tx_matrix.RData"
 	params:
-		out = outFolder + "",
+		inFolder = inFolder,
+		outFolder = outFolder,
 		script = scriptFolder + "collate_tables.R"
 	shell:
 		"ml R/3.6.0;"
-		"cd {inFolder};"
-		"Rscript {params.script} {params.out}"
+		"Rscript {params.script} {params.inFolder} {params.outFolder}"
 
 rule multiQC:
 	output:

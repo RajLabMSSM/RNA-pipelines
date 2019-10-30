@@ -1,16 +1,18 @@
 # find all gene and transcript files in a RAPiD directory
 # collate them into a table with tximport
 # save as RData
+# execution
+# Rscript collate_tables.R <inFolder> <outFolder>
 
 args <- commandArgs(trailingOnly=TRUE)
-
-outFolder <- args[1]
+inFolder <- args[1]
+outFolder <- args[2]
 
 library(tximport)
 
-gene_files <- list.files(pattern = ".genes.results", full.names = TRUE, recursive = TRUE)
+gene_files <- list.files(path = inFolder, pattern = ".genes.results", full.names = TRUE, recursive = TRUE)
 
-tx_files <- list.files(pattern = ".isoforms.results", full.names = TRUE, recursive = TRUE)
+tx_files <- list.files(path = inFolder, pattern = ".isoforms.results", full.names = TRUE, recursive = TRUE)
 
 
 if(length(gene_files) > 0){

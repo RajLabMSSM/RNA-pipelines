@@ -1,3 +1,0 @@
-ModuleNotFoundError in line 5 of /hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile:
-No module named 'pandas'
-  File "/hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile", line 5, in <module>

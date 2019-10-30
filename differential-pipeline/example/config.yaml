@@ -1,0 +1,18 @@
+# Differential Pipeline config.yaml
+
+# set by user
+refCondition: "control"
+altCondition: "tdp"
+outFolder: "results/"
+dataCode: "hammell_tdp"
+
+# defaults - don't change
+metadata: "samples.tsv"
+rapidVersion: "RAPiD"
+
+# which modules to run - under development
+modules:
+        report: True
+        rsem_limma: True
+        kallisto_sleuth: False
+

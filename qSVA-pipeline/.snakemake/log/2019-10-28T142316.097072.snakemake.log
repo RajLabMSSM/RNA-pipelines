@@ -1,0 +1,3 @@
+NameError in line 31 of /hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile:
+name 'sample' is not defined
+  File "/hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile", line 31, in <module>

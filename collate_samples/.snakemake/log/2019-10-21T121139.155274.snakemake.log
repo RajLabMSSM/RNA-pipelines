@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job counts:
+	count	jobs
+	1	all
+	1	getMatrices
+	1	multiQC
+	3
+
+[Mon Oct 21 12:11:39 2019]
+rule getMatrices:
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_tx_matrix.RData
+    jobid: 1
+
+
+[Mon Oct 21 12:11:39 2019]
+rule multiQC:
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_multiqc_report.html
+    jobid: 2
+
+[Mon Oct 21 12:17:09 2019]
+Error in rule getMatrices:
+    jobid: 1
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_tx_matrix.RData
+
+ClusterJobException in line 28 of /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile:
+Error executing rule getMatrices on cluster (jobid: 1, external: 118456, jobscript: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/tmp.nwd_oehk/snakejob.getMatrices.1.sh). For detailed error see the cluster log.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

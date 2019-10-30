@@ -1,0 +1,40 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job counts:
+	count	jobs
+	1	all
+	1	getMatrices
+	1	multiQC
+	3
+
+[Wed Jun 26 16:10:34 2019]
+rule getMatrices:
+    output: /sc/orga/projects/als-omics/RAPiD/gene_matrix.RData, /sc/orga/projects/als-omics/RAPiD/tx_matrix.RData
+    jobid: 1
+
+
+[Wed Jun 26 16:10:34 2019]
+rule multiQC:
+    output: /sc/orga/projects/als-omics/RAPiD/multiqc/multiqc_report.html
+    jobid: 2
+
+[Wed Jun 26 16:46:46 2019]
+Error in rule multiQC:
+    jobid: 2
+    output: /sc/orga/projects/als-omics/RAPiD/multiqc/multiqc_report.html
+    shell:
+        export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;multiqc -f --outdir /sc/orga/projects/als-omics/RAPiD/multiqc/ /sc/orga/projects/als-omics/RAPiD/
+
+Error executing rule multiQC on cluster (jobid: 2, external: 132243, jobscript: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/tmp.aooc9wqp/snakejob.multiQC.2.sh). For detailed error see the cluster log.
+[Wed Jun 26 17:12:48 2019]
+Error in rule getMatrices:
+    jobid: 1
+    output: /sc/orga/projects/als-omics/RAPiD/gene_matrix.RData, /sc/orga/projects/als-omics/RAPiD/tx_matrix.RData
+    shell:
+        ml R/3.6.0;cd /sc/orga/projects/als-omics/RAPiD/;Rscript /sc/orga/projects/als-omics/NYGC_ALS/scripts/collate_tables.R
+
+Error executing rule getMatrices on cluster (jobid: 1, external: 132241, jobscript: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/tmp.aooc9wqp/snakejob.getMatrices.1.sh). For detailed error see the cluster log.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/log/2019-06-26T161034.414793.snakemake.log

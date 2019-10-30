@@ -1,0 +1,65 @@
+
+# Snakemake pipeline for combining data from multiple samples together
+
+# where the scripts are - default within the pipeline folder
+scriptFolder = "/sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/scripts/"
+
+# where your RAPiD run is
+inFolder = "/sc/orga/projects/als-omics/RAPiD/"
+
+# where you want the output tables to go
+outFolder = "/sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_"
+
+# for testing - two samples:
+#inFolder = "/sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/test"
+
+# example - Swarup 
+#inFolder = "/sc/orga/projects/als-omics/NYGC_ALS/big_Swarup_FTD/RAPiD-nf/"
+#outFolder = "/sc/orga/projects/als-omics/NYGC_ALS/big_Swarup_FTD"
+
+rule all:
+	input: 
+		outFolder + "gene_matrix.RData",
+		outFolder + "tx_matrix.RData",
+		outFolder + "multiqc_report.html"
+#		outFolder + "genes_counts_deseq.RData",
+#		outFolder + "genes_counts_voom.RData"
+
+rule getMatrices:
+	output: 
+		outFolder + "gene_matrix.RData",
+		outFolder + "tx_matrix.RData"
+	params:
+		out = outFolder + "",
+		script = scriptFolder + "collate_tables.R"
+	shell:
+		"ml R/3.6.0;"
+		"cd {inFolder};"
+		"Rscript {params.script} {params.out}"
+
+rule multiQC:
+	output:
+		outFolder + "multiqc_report.html"
+	params:
+		out = outFolder + ""
+	shell:
+		"export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
+		"/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/bin/multiqc -f --outdir {params.out} {inFolder}"
+
+# take gene counts
+# remove low count genes
+# apply voom normalisation
+# apply DESeq normalisation
+# save objects separately
+rule normalise_genes:
+	input:
+		outFolder + "gene_matrix.RData",
+	output:
+		outFolder + "genes_counts_voom.RData",
+		outFolder + "genes_counts_deseq.RData" 
+	params:
+		out = outFolder + "",
+		script = scriptFolder + "normalise_genes.R"
+	shell:
+		"ml R/3.6.0;"
+		"Rscript {params.script} {input} {params.out}"	

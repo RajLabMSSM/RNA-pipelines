@@ -1,0 +1,21 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	createDegradationMatrix
+	1
+
+[Mon Oct 28 14:41:52 2019]
+rule createDegradationMatrix:
+    input: input/test.bam, input/test.bam.bai
+    output: output/test.degradation_matrix.tsv
+    jobid: 0
+    wildcards: samples=test
+
+Reading regions...
+Done. Computing region matrix...
+[Mon Oct 28 14:41:55 2019]
+Finished job 0.
+1 of 1 steps (100%) done

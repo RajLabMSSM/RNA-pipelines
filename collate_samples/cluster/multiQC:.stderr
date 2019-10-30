@@ -1,0 +1,41 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	multiQC
+	1
+
+[Thu Oct 24 19:14:20 2019]
+rule multiQC:
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_multiqc_report.html
+    jobid: 0
+
+/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/lib/python3.6/site-packages/multiqc/utils/config.py:45: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  configs = yaml.load(f)
+/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/lib/python3.6/site-packages/multiqc/utils/config.py:51: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  sp = yaml.load(f)
+[INFO   ]         multiqc : This is MultiQC v1.7
+[INFO   ]         multiqc : Template    : default
+[INFO   ]         multiqc : Searching '/sc/orga/projects/als-omics/RAPiD/'
+[INFO   ]  feature_counts : Found 1252 reports
+[INFO   ]          picard : Found 1252 AlignmentSummaryMetrics reports
+[INFO   ]          picard : Found 1252 GcBiasMetrics reports
+[INFO   ]          picard : Found 1252 InsertSizeMetrics reports
+[INFO   ]          picard : Found 1252 MarkDuplicates reports
+[INFO   ]          picard : Found 1252 RnaSeqMetrics reports
+[INFO   ]            star : Found 1252 reports
+[INFO   ]     trimmomatic : Found 1092 logs
+[INFO   ]          fastqc : Found 1252 reports
+[INFO   ]         multiqc : Compressing plot data
+[INFO   ]         multiqc : Report      : ../../data/oct_2019_/multiqc_report.html
+[INFO   ]         multiqc : Data        : ../../data/oct_2019_/multiqc_data
+[INFO   ]         multiqc : MultiQC complete
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 40 of /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile:
+Missing files after 5 seconds:
+/sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_multiqc_report.html
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message

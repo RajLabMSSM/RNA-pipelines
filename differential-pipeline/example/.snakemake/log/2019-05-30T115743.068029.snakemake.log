@@ -1,0 +1,51 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	copyConfig
+	1	differential_report
+	1	rsem_limma
+	4
+
+[Thu May 30 11:57:45 2019]
+rule rsem_limma:
+    input: /sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/tdp_1/Processed/RAPiD/rsem/tdp_1.genes.results, /sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA1_1/Processed/RAPiD/rsem/control_shRNA1_1.genes.results, /sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/tdp_2/Processed/RAPiD/rsem/tdp_2.genes.results, /sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA2_1/Processed/RAPiD/rsem/control_shRNA2_1.genes.results, /sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA1_2/Processed/RAPiD/rsem/control_shRNA1_2.genes.results, /sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA2_2/Processed/RAPiD/rsem/control_shRNA2_2.genes.results
+    output: results/limma_rsem/hammell_tdp_results.RData
+    jobid: 2
+
+[Thu May 30 11:58:16 2019]
+Finished job 2.
+1 of 4 steps (25%) done
+
+[Thu May 30 11:58:16 2019]
+rule differential_report:
+    input: results/limma_rsem/hammell_tdp_results.RData
+    output: results/report/hammell_tdp_report.html
+    jobid: 3
+
+[Thu May 30 11:58:30 2019]
+Finished job 3.
+2 of 4 steps (50%) done
+
+[Thu May 30 11:58:30 2019]
+localrule copyConfig:
+    input: /hpc/users/humphj04/pipelines/differential-pipeline/example/config.yaml, samples.tsv
+    output: results/config.yaml, results/samples.tsv
+    jobid: 1
+
+[Thu May 30 11:58:30 2019]
+Finished job 1.
+3 of 4 steps (75%) done
+
+[Thu May 30 11:58:30 2019]
+localrule all:
+    input: results/config.yaml, samples.tsv, results/limma_rsem/hammell_tdp_results.RData, results/report/hammell_tdp_report.html
+    jobid: 0
+
+[Thu May 30 11:58:30 2019]
+Finished job 0.
+4 of 4 steps (100%) done
+Complete log: /hpc/users/humphj04/pipelines/differential-pipeline/example/.snakemake/log/2019-05-30T115743.068029.snakemake.log

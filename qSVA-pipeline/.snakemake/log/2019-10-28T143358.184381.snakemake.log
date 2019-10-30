@@ -1,0 +1,3 @@
+KeyError in line 3 of /hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile:
+'metadata'
+  File "/hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile", line 3, in <module>

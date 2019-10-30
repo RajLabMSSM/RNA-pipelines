@@ -1,0 +1,5 @@
+Building DAG of jobs...
+MissingInputException in line 14 of /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile:
+Missing input files for rule all:
+/sc/orga/projects/als-omics/NYGC_ALS/data/tx_matrix.RData
+/sc/orga/projects/als-omics/NYGC_ALS/data/gene_matrix.RData

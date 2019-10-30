@@ -1,0 +1,30 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	getMatrices
+	1	multiQC
+	3
+
+[Thu Oct 24 19:10:41 2019]
+rule multiQC:
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_multiqc_report.html
+    jobid: 2
+    reason: Missing output files: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_multiqc_report.html
+
+export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/bin/multiqc -f --outdir /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_ /sc/orga/projects/als-omics/RAPiD/
+Terminating processes on user request, this might take some time.
+[Thu Oct 24 19:11:50 2019]
+Error in rule multiQC:
+    jobid: 2
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_multiqc_report.html
+
+RuleException:
+CalledProcessError in line 47 of /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile:
+Command 'set -euo pipefail;  export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/bin/multiqc -f --outdir /sc/orga/projects/als-omics/NYGC_ALS/data/oct_2019_ /sc/orga/projects/als-omics/RAPiD/' returned non-zero exit status 1.
+  File "/sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile", line 47, in __rule_multiQC
+  File "/sc/orga/work/humphj04/conda/envs/leafcutter-pipeline/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+Complete log: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/log/2019-10-24T191041.659163.snakemake.log

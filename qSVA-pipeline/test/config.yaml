@@ -1,0 +1,5 @@
+metadata: "test/test_samples.tsv"
+lib_sizes_file: "test/test_lib_sizes.tsv"
+code: "test"
+regions: "regions/sorted_ribozero_degradation_regions_v2_hg38.bed"
+read_length: 125

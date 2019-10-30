@@ -1,0 +1,371 @@
+---
+title: "Differential analyses"
+author: "Jack Humphrey"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+    keep_md: false
+    toc: true
+    number_sections: false
+    toc_depth: 4
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+params:
+  FDR: FDR
+  rwd: rwd
+  dataCode: dataCode
+  refCondition: refCondition
+  altCondition: altCondition
+  metadata: metadata
+  kallisto_folder: kallisto_folder
+  rsem_folder: rsem_folder
+  out: out
+editor_options:
+  chunk_output_type: console
+---
+```{r test, include=FALSE, eval= FALSE}
+## For testing
+rwd <- getwd()
+refCondition <- "control"
+altCondition <- "tdp"
+metadata <- "tdp_joint_analysis/joint_samples.tsv"
+dataCode <- "joint_tdp_analysis"
+kallisto_folder <- ""
+rsem_folder <- "tdp_joint_analysis/limma_rsem"
+rsem_files <- list.files(file.path(rwd, rsem_folder) )
+kallisto_files <- list.files(file.path(rwd, kallisto_folder) )
+fdr_param <- 0.05
+
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = params$rwd)
+knitr::opts_chunk$set(
+  warning=FALSE,
+  message=FALSE,
+  results = 'asis',
+  error = FALSE,
+  tidy = FALSE,
+  fig.show = "hold"
+  )
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(ggrepel)
+library(stringr)
+library(janitor)
+library(DT)
+library(UpSetR)
+library(ggfortify) # for PCA plots
+```
+
+```{r read_params}
+refCondition <- params$refCondition
+altCondition <- params$altCondition
+metadata <- params$metadata
+dataCode <- params$dataCode
+rwd <- params$rwd
+kallisto_folder <- params$kallisto_folder
+rsem_folder <- params$rsem_folder
+rsem_files <- list.files(file.path(rwd, rsem_folder) )
+kallisto_files <- list.files(file.path(rwd, kallisto_folder) )
+fdr_param <- as.numeric(params$FDR)
+
+
+
+```
+
+
+### Preamble
+
+Data code: **`r dataCode`**
+
+Comparing condition = **`r refCondition`** against condition = **`r altCondition`**
+
+
+```{r support}
+
+rsem <- TRUE
+kallisto <- TRUE
+if( length(rsem_files) == 0 ){ rsem <- FALSE}
+if( length(kallisto_files) == 0 ){kallisto <- FALSE}
+
+# need to keep strings as factors ,funnily enough
+support <- read.table(metadata, header= TRUE, stringsAsFactors = TRUE)
+
+
+# print the model used
+full_mod <- "~ condition"
+
+covariates <- names(support)[ !names(support) %in% c("sample", "condition", "rapid_path")]
+
+if( length(covariates) > 0 ){
+	full_mod <- paste("~", paste(c("condition", covariates), collapse = " + "))
+}
+
+```
+
+Model tested: **`r full_mod`**
+
+```{r support_tables}
+
+datatable(support,
+  options = list(scrollX = TRUE, scrollY = 500, scrollCollapse = TRUE, paging = FALSE, autoWidth = FALSE)
+  )
+
+group_by(support, condition ) %>% summarise( n = n() ) %>% knitr::kable()
+
+```
+
+## PCA
+
+PCA on 1000 most variable genes.
+
+If covariates are present in the metadata then they are regressed out and PCA recomputed on all genes.
+
+```{r gene_pca}
+gene_matrix_file <- paste0(rsem_folder, "/", dataCode, "_gene_matrix.tsv")
+
+gene_matrix <- read_tsv(gene_matrix_file) %>% tibble::column_to_rownames(var = "EnsemblID")
+
+# convert to cpm
+gene_matrix <- edgeR::cpm(gene_matrix)
+
+# remove lowly expressed genes CPM > 10
+gene_matrix <- gene_matrix[rowMeans(gene_matrix) > 10, ]
+
+# pick 1000 most variable genes by coefficient of variation
+gene_cv <- apply(gene_matrix, MARGIN = 1, FUN = sd) /  apply(gene_matrix, MARGIN = 1, FUN = mean)
+
+variable_genes <- names(head(gene_cv[order(gene_cv, decreasing = TRUE)] ,1000))
+
+variable_matrix <- gene_matrix[ variable_genes,]
+
+pca <- prcomp(t(variable_matrix), scale. = TRUE, center = TRUE)
+
+# regress out covariates if present
+covariates <- names(support)[ !names(support) %in% c("sample", "condition", "rapid_path")]
+
+if( length(covariates) > 0 ){
+  autoplot(pca, data = support, colour = "condition", shape = as.factor(covariates[1]) ) + theme_bw() + labs(title = "PCA on 1000 most variable genes")
+
+}else{
+  autoplot(pca, data = support, colour = "condition") + theme_bw() + labs(title = "PCA on 1000 most variable genes")
+}
+
+
+
+```
+
+```{r gene_pca_resid}
+
+
+if( length(covariates) > 0 ){
+
+  mod_string <- paste("y ~", paste(covariates), collapse = " + ")
+
+  message("covariates present in metadata;")
+  message("regressing out covariates to recompute pca")
+  
+  residual_matrix <- 
+    purrr::map(rownames(gene_matrix), ~{
+      df <- support  
+      df$y <- unlist(gene_matrix[.x, ,drop = TRUE])
+      row_res <- 
+        lm( formula = mod_string, data = df )
+      
+      row_res <- row_res$residuals
+      row_res <- as.data.frame(t(row_res))
+      return(row_res)
+    }) %>%
+    bind_rows()
+  rownames(residual_matrix) <- rownames(gene_matrix)
+
+  # now plot all genes
+  variable_matrix <- residual_matrix[ variable_genes,]
+
+  pca_resid <- prcomp(t(residual_matrix), scale. = TRUE, center = TRUE)
+
+  autoplot(pca_resid, data = support, colour = "condition", shape = covariates[1]) + labs(title = "Covariates regressed out; all genes used") + theme_bw()
+}
+
+```
+
+
+# 1. Differential Gene Expression
+
+This uses the estimated total gene expression for each gene and tests for differences in gene expression between conditions.
+
+## RSEM
+
+```{r rsem_dge}
+
+rsem_dge_file <- paste0(rsem_folder, "/", dataCode, "_genes_results.txt")
+
+rsem_dge <- read_tsv(rsem_dge_file) %>% janitor::clean_names()
+
+# select significant at threshold
+rsem_dge_sig <-
+  filter(rsem_dge, adj_p_val < fdr_param) %>%
+  select(ensembl_id, gene, log_fc, p_value, FDR = adj_p_val) %>%
+  arrange( FDR )
+
+rsem_dge_sig_genes <- nrow(rsem_dge_sig)
+
+```
+
+**`r rsem_dge_sig_genes`** differentially expressed genes found at FDR < `r fdr_param`
+
+```{r rsem_dge_plot}
+
+datatable(rsem_dge_sig)
+
+x_limit <-  max(abs(rsem_dge$log_fc))
+
+ggplot(
+  rsem_dge,
+  aes( x = log_fc, y = -log10(p_value), colour = adj_p_val < fdr_param)
+  ) +
+  scale_colour_manual(values = c("gray", "red") ) +
+  geom_point() +
+  geom_text_repel(data = head(rsem_dge,10),
+    aes(x = log_fc, y = -log10(p_value), label = gene ), colour = "black") +
+  xlab("log2 fold change") +
+  ylab("-log10(P value)") +
+  theme_classic() +
+  guides(colour = FALSE) +
+  xlim(-x_limit, x_limit)
+
+```
+
+# 2. Differential Transcript Expression
+
+This treats each transcript of a gene independently and tests for differences in transcript expression between conditions.
+
+## RSEM
+
+```{r dte_rsem}
+
+rsem_dte_file <- paste0(rsem_folder, "/", dataCode, "_transcripts_results.txt")
+
+rsem_dte <- read_tsv(rsem_dte_file) %>% janitor::clean_names()
+
+# select significant at threshold
+rsem_dte_sig <-
+  filter(rsem_dte, adj_p_val < fdr_param) %>%
+  select(ensembl_id, gene, log_fc, p_value, FDR = adj_p_val) %>%
+  arrange( FDR )
+
+rsem_dte_sig_tx <- nrow(rsem_dte_sig)
+
+rsem_dte_n_genes <- length(unique(rsem_dte_sig$gene))
+
+```
+
+**`r rsem_dte_sig_tx`** differentially expressed transcripts in **`r rsem_dte_n_genes`** genes found at FDR < `r fdr_param`
+
+```{r}
+
+datatable(rsem_dte_sig)
+
+x_limit <-  max(abs(rsem_dte$log_fc))
+
+ggplot(
+  rsem_dte,
+  aes( x = log_fc, y = -log10(p_value), colour = adj_p_val < fdr_param)
+  ) +
+  scale_colour_manual(values = c("gray", "red") ) +
+  geom_point() +
+  geom_text_repel(data = head(rsem_dte,10),
+    aes(x = log_fc, y = -log10(p_value), label = gene ), colour = "black") +
+  xlab("log2 fold change") +
+  ylab("-log10(P value)") +
+  theme_classic() +
+  guides(colour = FALSE) +
+  xlim(-x_limit, x_limit)
+
+```
+
+
+# 2. Differential Transcript Usage
+
+This compares the expression of each transcript in a gene to each other. This tests whether transcript expression changes as a proportion of the total expression for that gene.
+
+## RSEM
+
+```{r dtu_rsem}
+
+rsem_dtu_tx_file <- paste0(rsem_folder, "/", dataCode, "_dtu_transcript_results.txt")
+rsem_dtu_genes_file <- paste0(rsem_folder, "/", dataCode, "_dtu_gene_results.txt")
+
+rsem_dtu_tx <- read_tsv(rsem_dtu_tx_file) %>% janitor::clean_names()
+rsem_dtu_genes <- read_tsv(rsem_dtu_genes_file) %>% janitor::clean_names()
+
+
+rsem_dtu_tx_sig <-
+  filter(rsem_dtu_tx, fdr < fdr_param) %>%
+  select(gene = gene_id, transcript = txid, log_fc, p_value, fdr )
+rsem_dtu_genes_sig <-
+  filter(rsem_dtu_genes, fdr < fdr_param ) %>%
+  select(gene = gene_id, n_transcripts = n_exons, p_value, fdr)
+
+n_sig_rsem_dtu_tx <- nrow(rsem_dtu_tx_sig)
+n_sig_rsem_dtu_genes <- nrow(rsem_dtu_genes_sig)
+
+```
+**`r n_sig_rsem_dtu_tx `** differentially used transcripts in **`r n_sig_rsem_dtu_genes`** genes found at FDR < `r fdr_param`
+
+
+```{r dtu_plots}
+
+datatable(rsem_dtu_tx_sig)
+
+
+x_limit <-  max(abs(rsem_dte$log_fc))
+
+ggplot(
+  rsem_dtu_tx,
+  aes( x = log_fc, y = -log10(p_value), colour = fdr < fdr_param)
+  ) +
+  scale_colour_manual(values = c("gray", "red") ) +
+  geom_point() +
+  geom_text_repel(data = head(rsem_dtu_tx_sig,10),
+    aes(x = log_fc, y = -log10(p_value), label = gene ), colour = "black") +
+  xlab("log2 fold change") +
+  ylab("-log10(P value)") +
+  theme_classic() +
+  guides(colour = FALSE) +
+  xlim(-x_limit, x_limit)
+
+
+```
+
+## Overlap between categories
+
+Each measurement tests something different.
+Is it possible to separate gene expression, transcript expression and transcript usage?
+
+```{r upset}
+dge_genes <- rsem_dge_sig$gene %>% unique()
+dte_genes <- rsem_dte_sig$gene %>% unique()
+dtu_genes <- rsem_dtu_genes_sig$gene %>% unique()
+
+all_genes <- unique( c(dge_genes,dte_genes,dtu_genes))
+
+upset_table <- data.frame(gene = all_genes) %>%
+  mutate( DGE = as.numeric(gene %in% dge_genes),
+    DTE = as.numeric(gene %in% dte_genes),
+    DTU = as.numeric(gene %in% dtu_genes) )
+
+upset(upset_table, sets = c("DGE", "DTE", "DTU"),  
+  order.by = "freq",
+  empty.intersections = "on"
+)
+
+
+```

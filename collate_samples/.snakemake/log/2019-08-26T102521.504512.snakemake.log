@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	getMatrices
+	1	normalise_genes
+	3
+
+[Mon Aug 26 10:25:21 2019]
+rule getMatrices:
+    output: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData
+    jobid: 1
+    reason: Missing output files: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData
+
+ml R/3.6.0;cd /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTD/RAPiD-nf/;Rscript /sc/orga/projects/als-omics/NYGC_ALS/scripts/collate_tables.R /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/
+[Mon Aug 26 10:25:21 2019]
+Error in rule getMatrices:
+    jobid: 1
+    output: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData
+    shell:
+        ml R/3.6.0;cd /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTD/RAPiD-nf/;Rscript /sc/orga/projects/als-omics/NYGC_ALS/scripts/collate_tables.R /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/log/2019-08-26T102521.504512.snakemake.log

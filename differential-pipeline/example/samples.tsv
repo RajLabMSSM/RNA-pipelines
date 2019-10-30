@@ -1,0 +1,7 @@
+sample	rapid_path	condition
+tdp_1	/sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/tdp_1	tdp
+control_shRNA1_1	/sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA1_1	control
+tdp_2	/sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/tdp_2	tdp
+control_shRNA2_1	/sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA2_1	control
+control_shRNA1_2	/sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA1_2	control
+control_shRNA2_2	/sc/orga/projects/als-omics/TDP-43_knockdown_data/Hammell/RAPiD-nf-0.3.0/control_shRNA2_2	control

@@ -1,0 +1,3 @@
+NameError in line 5 of /hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile:
+name 'pd' is not defined
+  File "/hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile", line 5, in <module>

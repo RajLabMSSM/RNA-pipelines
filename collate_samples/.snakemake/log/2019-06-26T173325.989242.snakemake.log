@@ -1,0 +1,35 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job counts:
+	count	jobs
+	1	all
+	1	getMatrices
+	1	multiQC
+	3
+
+[Wed Jun 26 17:33:26 2019]
+rule getMatrices:
+    output: /sc/orga/projects/als-omics/RAPiD/gene_matrix.RData, /sc/orga/projects/als-omics/RAPiD/tx_matrix.RData
+    jobid: 1
+
+
+[Wed Jun 26 17:33:26 2019]
+rule multiQC:
+    output: /sc/orga/projects/als-omics/RAPiD/multiqc/multiqc_report.html
+    jobid: 2
+
+[Wed Jun 26 18:51:51 2019]
+Finished job 1.
+1 of 3 steps (33%) done
+[Wed Jun 26 19:40:04 2019]
+Error in rule multiQC:
+    jobid: 2
+    output: /sc/orga/projects/als-omics/RAPiD/multiqc/multiqc_report.html
+    shell:
+        export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/bin/multiqc -f --outdir /sc/orga/projects/als-omics/RAPiD/multiqc/ /sc/orga/projects/als-omics/RAPiD/
+
+Error executing rule multiQC on cluster (jobid: 2, external: 151270, jobscript: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/tmp.3yw8pjw7/snakejob.multiQC.2.sh). For detailed error see the cluster log.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/log/2019-06-26T173325.989242.snakemake.log

@@ -1,0 +1,58 @@
+# snakemake pipeline for extracting qSVA degradation matrices
+# Jack Humphrey
+metadata = config['metadata']
+
+lib_sizes_file = config['lib_sizes_file']
+code = config['code']
+
+import pandas as pd
+samples = pd.read_csv(metadata, sep = '\t')['sample']
+
+shell.prefix('export PS1="";source activate qSVA-pipeline;')
+
+inFolder = "input/"
+outFolder = "output/"
+
+regions = config['regions']
+read_length = config['read_length']
+#samples = ["test"]
+
+rule all:
+	input: 
+		outFolder + code + ".degradation_matrix.RData"
+		#expand('{outFolder}{sample}.degradation_matrix.tsv', outFolder = outFolder, sample = samples )
+
+rule createDegradationMatrix:
+	input:
+		bam = inFolder + '{samples}' + ".bam",
+		bai = inFolder + '{samples}' + ".bam.bai"
+	output:
+		#expand('{outFolder}{sample}.degradation_matrix.tsv', outFolder = outFolder, sample = samples )
+		outFolder + '{samples}' + ".degradation_matrix.tsv"
+	params:
+		script = "scripts/region_matrix.py",
+		regions = regions
+	shell:
+		"/usr/bin/python2.7 {params.script}"
+		" --regions {params.regions}"
+		" --bams {input.bam} "
+		" --wiggletools $(which wiggletools) "
+		" -p 1 "
+		" > {output}"
+
+
+rule collateMatrix:
+	input:
+		 expand('{outFolder}{sample}.degradation_matrix.tsv', outFolder = outFolder, sample = samples )
+	output:
+		outFolder + code + ".degradation_matrix.RData"
+	params:
+		script = "scripts/collate_matrix.R",
+		read_length = read_length
+	shell:
+		"Rscript {params.script} "
+		"--outFolder {outFolder} "
+		"--lib_size_file {lib_sizes_file} "
+		"--sample_file {metadata} "
+		"--code {code} "
+		"--read_length {read_length}"

@@ -1,0 +1,3 @@
+NameError in line 45 of /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile:
+name 'outFolder' is not defined
+  File "/sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/Snakefile", line 45, in <module>

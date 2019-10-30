@@ -1,0 +1,3 @@
+TypeError in line 31 of /hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile:
+unhashable type: 'list'
+  File "/hpc/users/humphj04/pipelines/qSVA-pipeline/Snakefile", line 31, in <module>

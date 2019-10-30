@@ -1,0 +1,30 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job counts:
+	count	jobs
+	1	all
+	1	createDegradationMatrix
+	2
+
+[Mon Oct 28 14:41:48 2019]
+rule createDegradationMatrix:
+    input: input/test.bam, input/test.bam.bai
+    output: output/test.degradation_matrix.tsv
+    jobid: 1
+    wildcards: samples=test
+
+Waiting at most 30 seconds for missing files.
+[Mon Oct 28 14:42:07 2019]
+Finished job 1.
+1 of 2 steps (50%) done
+
+[Mon Oct 28 14:42:07 2019]
+localrule all:
+    input: output/test.degradation_matrix.tsv
+    jobid: 0
+
+[Mon Oct 28 14:42:07 2019]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /hpc/users/humphj04/pipelines/qSVA-pipeline/.snakemake/log/2019-10-28T144144.777419.snakemake.log

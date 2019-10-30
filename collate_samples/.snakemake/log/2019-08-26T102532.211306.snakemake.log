@@ -1,0 +1,44 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	getMatrices
+	1	normalise_genes
+	3
+
+[Mon Aug 26 10:25:32 2019]
+rule getMatrices:
+    output: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData
+    jobid: 1
+    reason: Missing output files: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData
+
+ml R/3.6.0;cd /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTD/RAPiD-nf/;Rscript /sc/orga/projects/als-omics/NYGC_ALS/scripts/collate_tables.R /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/
+[Mon Aug 26 10:26:33 2019]
+Finished job 1.
+1 of 3 steps (33%) done
+
+[Mon Aug 26 10:26:33 2019]
+rule normalise_genes:
+    input: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData
+    output: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_voom.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_deseq.RData
+    jobid: 2
+    reason: Missing output files: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_voom.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_deseq.RData; Input files updated by another job: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData
+
+ml R/3.6.0;Rscript /sc/orga/projects/als-omics/NYGC_ALS/scripts/normalise_genes.R /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/
+[Mon Aug 26 10:27:11 2019]
+Finished job 2.
+2 of 3 steps (67%) done
+
+[Mon Aug 26 10:27:11 2019]
+localrule all:
+    input: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_deseq.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_voom.RData
+    jobid: 0
+    reason: Input files updated by another job: /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/tx_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_voom.RData, /sc/orga/projects/als-omics/NYGC_ALS/big_data/Swarup_FTDdata/genes_counts_deseq.RData
+
+[Mon Aug 26 10:27:11 2019]
+Finished job 0.
+3 of 3 steps (100%) done
+Complete log: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/log/2019-08-26T102532.211306.snakemake.log

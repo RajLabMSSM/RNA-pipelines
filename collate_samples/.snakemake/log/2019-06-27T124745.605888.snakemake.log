@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 100
+Job counts:
+	count	jobs
+	1	all
+	1	normalise_genes
+	2
+
+[Thu Jun 27 12:47:45 2019]
+rule normalise_genes:
+    input: /sc/orga/projects/als-omics/NYGC_ALS/data/gene_matrix.RData
+    output: /sc/orga/projects/als-omics/NYGC_ALS/data/genes_counts_voom.RData, /sc/orga/projects/als-omics/NYGC_ALS/data/genes_counts_deseq.RData
+    jobid: 2
+
+[Thu Jun 27 13:33:08 2019]
+Finished job 2.
+1 of 2 steps (50%) done
+
+[Thu Jun 27 13:33:08 2019]
+localrule all:
+    input: /sc/orga/projects/als-omics/NYGC_ALS/data/gene_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/data/tx_matrix.RData, /sc/orga/projects/als-omics/NYGC_ALS/data/genes_counts_deseq.RData, /sc/orga/projects/als-omics/NYGC_ALS/data/genes_counts_voom.RData
+    jobid: 0
+
+[Thu Jun 27 13:33:08 2019]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /sc/orga/projects/als-omics/NYGC_ALS/pipelines/collate_samples/.snakemake/log/2019-06-27T124745.605888.snakemake.log

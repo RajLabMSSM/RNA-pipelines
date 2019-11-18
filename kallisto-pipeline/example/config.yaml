@@ -1,9 +1,25 @@
+# not currently used
 dataCode: "test"
+
+# directory containing FASTQs or symlinks to FASTQs
+# must be in format <sample>.R[12].fastq.gz
 inFolder: "example"
+
+# where to output the abundance estimates
 outFolder: "results"
+
+# a list of sample IDs to use
 metadata: "example/samples.tsv"
+
+# was the RNA-seq library stranded?
+# most libraries (ROSMAP, etc) are reverse stranded --rf-stranded
 stranded: "--rf-stranded"
-nBootstraps: 0
+
+# specify bootstraps - default 100
+nBootstraps: 100
+
+# specify which FASTA files to use as indexes
+# can use multiple indexes
 fastaFiles: 
  test: "example/test.fa"
  SPRYD3_1:  "example/SPRYD3.gencode.fa"

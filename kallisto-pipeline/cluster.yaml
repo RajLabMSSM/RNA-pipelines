@@ -1,0 +1,18 @@
+__default__:
+  #partition: chimera
+  queue: premium
+  cores: 1
+  mem: 3750
+  time: '180'
+  name: $(basename $(pwd)):{rule}:{wildcards}
+  output: logs/{rule}:{wildcards}.stdout
+  error: logs/{rule}:{wildcards}.stderr
+kallisto_index:
+  time: '120'
+  cores: 16
+  mem: 3750
+kallisto_quant:
+  time: '120'
+  cores: 4
+  mem: 3750
+

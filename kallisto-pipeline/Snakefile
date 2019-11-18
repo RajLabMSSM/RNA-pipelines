@@ -64,6 +64,7 @@ rule kallisto_index:
 	output:
 		outFolder + "/indexes/{fasta}.index"
 	shell:
+		"ml kallisto;"
 		"kallisto index -i {output} {input}"
 
 rule kallisto_quant:
@@ -78,6 +79,7 @@ rule kallisto_quant:
 	output:
 		outFolder + "/{sample}/{fasta}/abundance.h5"
 	shell:
+		"ml kallisto; "
 		"kallisto quant "
 		" -i {input.index} "
 		" --bootstrap-samples={params.nBootstraps} "

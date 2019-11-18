@@ -1,0 +1,9 @@
+dataCode: "test"
+inFolder: "example"
+outFolder: "results"
+metadata: "example/samples.tsv"
+stranded: "--rf-stranded"
+nBootstraps: 0
+fastaFiles: 
+ test: "example/test.fa"
+ SPRYD3_1:  "example/SPRYD3.gencode.fa"

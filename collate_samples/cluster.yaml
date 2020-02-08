@@ -1,21 +1,9 @@
 __default__:
   #partition: chimera
   queue: premium
-  cores: 1
-  mem: 7750
+  cores: 12
+  mem: 3000
   time: '180'
   name: $(basename $(pwd)):{rule}:{wildcards}
   output: logs/{rule}:{wildcards}.stdout
   error: logs/{rule}:{wildcards}.stderr
-getMatrices:
-  mem: 32000
-  time: '180'
-  cores: 1
-multiQC:
-  mem: 32000
-  time: '180'
-  cores: 1
-normalise_genes:
-  mem: 15700
-  time: '120'
-  cores: 1

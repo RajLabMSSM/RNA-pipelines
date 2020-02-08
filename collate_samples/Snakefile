@@ -21,9 +21,9 @@ rule all:
 	input: 
 		outFolder + "gene_matrix.RData",
 		outFolder + "tx_matrix.RData",
-		outFolder + "multiqc_report.html"
+		outFolder + "multiqc_report.html",
 #		outFolder + "genes_counts_deseq.RData",
-#		outFolder + "genes_counts_voom.RData"
+		outFolder + "genes_counts_voom.RData"
 
 rule getMatrices:
 	output: 

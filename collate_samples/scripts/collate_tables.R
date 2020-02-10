@@ -15,7 +15,9 @@ gene_files <- list.files(path = inFolder, pattern = ".genes.results", full.names
 tx_files <- list.files(path = inFolder, pattern = ".isoforms.results", full.names = TRUE, recursive = TRUE)
 
 
+
 if(length(gene_files) > 0){
+  message(paste0(" * collating genes from ", length(gene_files), " samples" ))
   gene_matrix <- tximport(files = gene_files, type = "rsem", countsFromAbundance="scaledTPM"  )
   
   genes_counts <- data.frame(gene_matrix$counts, check.names = F)
@@ -27,9 +29,12 @@ if(length(gene_files) > 0){
   
   save(genes_counts, genes_tpm, file = paste0(outFolder, "gene_matrix.RData"))
   
+}else{
+    stop( paste0("No gene files found in ", inFolder) )
 }
 
 if(length(tx_files) > 0){
+  message(paste0(" * collating transcripts from ", length(tx_files), " samples" ))
   tx_matrix <- tximport(tx_files, type = "rsem", txIn = TRUE, txOut = TRUE) 
   
   tx_counts <- data.frame(tx_matrix$counts, check.names = F)
@@ -41,8 +46,8 @@ if(length(tx_files) > 0){
   
   save(tx_counts, tx_tpm, file = paste0(outFolder, "tx_matrix.RData"))
   
+}else{
+    stop( paste0("No transcript files found in ", inFolder) )
 }
-
-
 
 

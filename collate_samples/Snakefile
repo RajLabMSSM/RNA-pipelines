@@ -23,7 +23,7 @@ rule all:
 		outFolder + "tx_matrix.RData",
 		outFolder + "multiqc_report.html",
 #		outFolder + "genes_counts_deseq.RData",
-		outFolder + "genes_counts_voom.RData"
+		#outFolder + "genes_counts_voom.RData"
 
 rule getMatrices:
 	output: 
@@ -44,7 +44,7 @@ rule multiQC:
 		out = outFolder + ""
 	shell:
 		"export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
-		"/sc/orga/work/humphj04/conda/envs/isoseq-pipeline/bin/multiqc -f --outdir {params.out} {inFolder}"
+		"/hpc/packages/minerva-centos7/py_packages/3.7/bin/multiqc  -f --outdir {params.out} {inFolder}"
 
 # take gene counts
 # remove low count genes

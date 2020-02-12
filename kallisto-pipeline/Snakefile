@@ -43,6 +43,8 @@ fastaFiles = config['fastaFiles']
 
 rule all:
 	input:
+                outFolder + "{fasta}_kallisto_counts.RData",
+        outFolder + "{fasta}_kallisto_matrix.RData"
 		expand("{outFolder}/{sample}/{fasta}/abundance.h5", outFolder = outFolder, fasta = fastaFiles, sample = samples)
 		#expand("{outFolder}/{fasta}.index", outFolder = outFolder, fasta = fastaFiles)
 
@@ -87,3 +89,15 @@ rule kallisto_quant:
 		" -o {params.quantOutFolder} "
 		" {input.r1_fastq_gz} "
 		" {input.r2_fastq_gz} "
+
+rule kallisto_collate:
+    input:
+        expand("{outFolder}/{sample}/{fasta}/abundance.h5", outFolder = outFolder, fasta = fastaFiles, sample = samples)
+    output:
+        outFolder + "{fasta}_kallisto_counts.RData",
+        outFolder + "{fasta}_kallisto_matrix.RData"
+    params:
+        script = "scripts/collate_kallisto.R"
+    shell:
+        "ml R/3.6.0;"
+        "Rscript {params.script} {outFolder}

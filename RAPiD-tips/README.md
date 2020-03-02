@@ -70,7 +70,12 @@ screen -S RAPiD
 You can run RAPiD like so:
 
 ```
-bsub -I -n 2 -W 24:00 -q premium -P acc_als-omics -R rusage[mem=3750] -R span[hosts=1] "/sc/hydra/projects/PBG/nextflow/bin/nextflow run RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded reverse -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --rawPath Raw/Illumina -resume"
+bsub -I -n 2 -W 24:00 -q premium -P acc_als-omics -R rusage[mem=3750] -R span[hosts=1] "/sc/hydra/projects/PBG/nextflow/bin/nextflow run RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded reverse -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --trimAdapter --rawPath Raw/Illumina -resume"
+```
+
+You can also submit to express instead of premium. Edit config/lsf.config to swap out premium for express.
+
+``` bsub -I -n 2 -W 12:00 -q express -P acc_als-omics -R rusage[mem=3750] -R span[hosts=1] "/sc/hydra/projects/PBG/nextflow/bin/nextflow run RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded reverse -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --trimAdapter --rawPath Raw/Illumina -resume"
 ```
 
 

@@ -44,13 +44,30 @@ print("samples are %s-end" % mode)
 samples = meta['sample']
 f1 = meta['f1']
 
+# account for multiple files per f1 and f2
+f1_split = [f.split(",") for f in f1]
+
 # check fastqs exist
-f1_exists = [os.path.isfile(f) for f in f1]
+f1_exists = []
+for f in f1_split:
+    for j in f:
+        f1_exists.append(os.path.isfile(j) )
 
 if not all(f1_exists):
     print( "missing files!" )
     exit()      
 
+# do same for R2
+if mode is "paired":
+    f2_exists = []
+    f2 = meta['f2']
+    f2_split = [f.split(",") for f in f2]
+    for f in f2_split:
+        for j in f:
+            f2_exists.append(os.path.isfile(j) )
+    if not all(f2_exists):
+        print( "missing f2 files")
+        exit()
 if mode == "paired":
     f2 = meta['f2']
 
@@ -62,15 +79,19 @@ for i in range(len(samples)):
     sample_dir = samples[i] + "/Raw/Illumina/"
     os.makedirs(sample_dir, exist_ok = True)
     # symlink f1 (and f2 if exists)
-    f1_source = os.path.abspath(f1[i])
-    f1_target = sample_dir + os.path.basename(f1[i]).split('.fastq.gz')[0] + '_R1' + ".fastq.gz"
-    if not os.path.exists(f1_target):
-        print(f1_target)
-        os.symlink(f1_source, f1_target )   
+    f1_split = f1[i].split(",")
+    for j in f1_split:
+        f1_source = os.path.abspath(j)
+        f1_target = sample_dir + os.path.basename(j).split('.fastq.gz')[0] + '_R1' + ".fastq.gz"
+        if not os.path.exists(f1_target):
+            print(f1_target)
+            os.symlink(f1_source, f1_target )   
     if mode == 'paired':
-        f2_source = os.path.abspath(f2[i])
-        f2_target = sample_dir + os.path.basename(f2[i]).split('.fastq.gz')[0] + '_R2' + ".fastq.gz"
-        if not os.path.exists(f2_target):
-            print(f2_target)
-            os.symlink(f2_source, f2_target )
+        f2_split = f2[i].split(",")
+        for j in f2_split:        
+            f2_source = os.path.abspath(j)
+            f2_target = sample_dir + os.path.basename(j).split('.fastq.gz')[0] + '_R2' + ".fastq.gz"
+            if not os.path.exists(f2_target):
+                print(f2_target)
+                os.symlink(f2_source, f2_target )
 

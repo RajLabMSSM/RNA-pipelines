@@ -14,7 +14,9 @@ gene_files <- list.files(path = inFolder, pattern = ".genes.results", full.names
 
 tx_files <- list.files(path = inFolder, pattern = ".isoforms.results", full.names = TRUE, recursive = TRUE)
 
-
+# remove any files that are from the "work/" directory - all should have the string "rsem" in the folder name
+gene_files <- gene_files[ grepl("rsem", gene_files) ]
+tx_files <- tx_files[ grepl("rsem", tx_files) ]
 
 if(length(gene_files) > 0){
   message(paste0(" * collating genes from ", length(gene_files), " samples" ))

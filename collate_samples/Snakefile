@@ -17,34 +17,39 @@ outFolder = config['outFolder']
 #inFolder = "/sc/orga/projects/als-omics/NYGC_ALS/big_Swarup_FTD/RAPiD-nf/"
 #outFolder = "/sc/orga/projects/als-omics/NYGC_ALS/big_Swarup_FTD"
 
+print("* Collating samples from a RAPiD run")
+
 rule all:
-	input: 
-		outFolder + "gene_matrix.RData",
-		outFolder + "tx_matrix.RData",
-		outFolder + "multiqc_report.html",
-#		outFolder + "genes_counts_deseq.RData",
-		#outFolder + "genes_counts_voom.RData"
+    input: 
+        outFolder + "gene_matrix.RData",
+        outFolder + "tx_matrix.RData",
+        outFolder + "multiqc_report.html"
+#       outFolder + "genes_counts_deseq.RData",
+        #outFolder + "genes_counts_voom.RData"
 
 rule getMatrices:
-	output: 
-		outFolder + "gene_matrix.RData",
-		outFolder + "tx_matrix.RData"
-	params:
-		inFolder = inFolder,
-		outFolder = outFolder,
-		script = scriptFolder + "collate_tables.R"
-	shell:
-		"ml R/3.6.0;"
-		"Rscript {params.script} {params.inFolder} {params.outFolder}"
+    output: 
+        outFolder + "gene_matrix.RData",
+        outFolder + "tx_matrix.RData"
+    params:
+        inFolder = inFolder,
+        outFolder = outFolder,
+        script = scriptFolder + "collate_tables.R"
+    shell:
+        "ml R/3.6.0;"
+        "Rscript {params.script} {params.inFolder} {params.outFolder}"
 
 rule multiQC:
-	output:
-		outFolder + "multiqc_report.html"
-	params:
-		out = outFolder + ""
-	shell:
-		"export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
-		"/hpc/packages/minerva-centos7/py_packages/3.7/bin/multiqc  -f --outdir {params.out} {inFolder}"
+    output:
+        outFolder + "multiqc_report.html"
+    params:
+        out = outFolder + ""
+    shell:
+        "export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
+        "export PS1=""; source activate differential-pipeline;"
+        "multiqc  -f --outdir {params.out} {inFolder}"
+
+        #"/hpc/packages/minerva-centos7/py_packages/3.7/bin/"
 
 # take gene counts
 # remove low count genes
@@ -52,14 +57,14 @@ rule multiQC:
 # apply DESeq normalisation
 # save objects separately
 rule normalise_genes:
-	input:
-		outFolder + "gene_matrix.RData",
-	output:
-		outFolder + "genes_counts_voom.RData",
-		outFolder + "genes_counts_deseq.RData" 
-	params:
-		out = outFolder + "",
-		script = scriptFolder + "normalise_genes.R"
-	shell:
-		"ml R/3.6.0;"
-		"Rscript {params.script} {input} {params.out}"	
+    input:
+        outFolder + "gene_matrix.RData",
+    output:
+        outFolder + "genes_counts_voom.RData",
+        outFolder + "genes_counts_deseq.RData" 
+    params:
+        out = outFolder + "",
+        script = scriptFolder + "normalise_genes.R"
+    shell:
+        "ml R/3.6.0;"
+        "Rscript {params.script} {input} {params.out}"  

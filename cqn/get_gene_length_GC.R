@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library("biomaRt")
 
 ensembl <- useMart("ensembl")
@@ -9,5 +10,5 @@ df$length <- as.numeric(df$end_position) - as.numeric(df$start_position)
 
 library("readr")
 
-write_tsv(df, path = "homo_sapiens_ensembl_gc_length.tsv.gz")
+write_tsv(df, path = "data/homo_sapiens_ensembl_gc_length.tsv.gz")
 

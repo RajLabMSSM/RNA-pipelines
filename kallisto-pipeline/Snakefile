@@ -64,14 +64,14 @@ rule kallisto_index:
     input:
         file=lambda wildcards: f"{config['fastaFiles'][wildcards.fasta]}"
     output:
-        outFolder + "indexes/{fasta}.index"
+        "indexes/{fasta}.index"
     shell:
         "ml kallisto;"
         "kallisto index -i {output} {input}"
 
 rule kallisto_quant:
     input:
-        index = outFolder + "indexes/{fasta}.index",
+        index = "indexes/{fasta}.index",
         r1_fastq_gz = inFolder + '{sample}.R1.fastq.gz',
         r2_fastq_gz = inFolder + '{sample}.R2.fastq.gz'
     params:
@@ -79,7 +79,8 @@ rule kallisto_quant:
         nBootstraps = nBootstraps,
         quantOutFolder = outFolder + "{sample}/{fasta}/"
     output:
-        outFolder + "{sample}/{fasta}/abundance.h5"
+        abundance = outFolder + "{sample}/{fasta}/abundance.h5",
+        runInfo = outFolder + "{sample}/{fasta}/run_info.json"
     shell:
         "ml kallisto; "
         "kallisto quant "
@@ -90,11 +91,10 @@ rule kallisto_quant:
         " {input.r1_fastq_gz} "
         " {input.r2_fastq_gz}; "
         # test file was created
-        " h5ls {output} "
+        " h5ls {output.abundance}"
 rule kallisto_collate:
     input:
-        expand("{outFolder}{sample}/{fasta}/abundance.h5", outFolder = outFolder, fasta = fastaFiles, sample = samples),
-        expand("{outFolder}{sample}/{fasta}/run_info.json", outFolder = outFolder, fasta = fastaFiles, sample = samples)
+        expand("{outFolder}{sample}/{fasta}/abundance.h5", outFolder = outFolder, sample = samples,allow_missing=True)
     output:
         outFolder + "{fasta}_kallisto_counts.RData",
         outFolder + "{fasta}_kallisto_matrix.RData"

@@ -13,17 +13,21 @@ index <- args[2]
 library(tximport)
 
 message(" * Collating Kallisto outputs" )
-message( paste0("* Using files quantified with index: ", index)
+message( paste0("* Using files quantified with index: ", index) )
 
 # first find all abundance.h5 files
 tx_files <- list.files(path = outFolder, pattern = "abundance.h5", full.names = TRUE, recursive = TRUE)
 
 # take just those within the provided index folder
 tx_files <- tx_files[ grepl(index, tx_files) ]
-
-sample_ids <- stringr::str_split_fixed(tx_files, "/", 4)[,2]
+print(tx_files[1:20])
+sample_ids <- stringr::str_split_fixed(tx_files, "/", 4)[,3]
 
 stopifnot(length(sample_ids) == length(tx_files) )
+
+names(tx_files) <- sample_ids
+
+print(sample_ids[1:20])
 
 if(length(tx_files) > 0){
   message(paste0(" * collating transcripts from ", length(tx_files), " samples" ))

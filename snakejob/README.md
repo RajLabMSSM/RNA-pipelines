@@ -4,6 +4,20 @@ Assumes you have a cluster.yaml file written for your pipeline. See example file
 
 Each rule must have resources listed in cluster.yaml.
 
+# USAGE
+
+Both scripts assume you have a conda environment that contains snakemake, called "snakemake".
+
+Check whether you do by running `conda activate snakemake`
+
+Make snakejob and snakejob_HPC executable and findable on your `$PATH`
+
+```
+chmod +x snakejob
+chmod +x snakejob_HPC
+ln -s $PWD/snakejob /usr/bin/
+ln -s $PWD/snakejob_HPC /usr/bin/
+```
 
 ## Running options
 
@@ -16,13 +30,28 @@ snakemake -s Snakefile --configfile config.yaml
 1. snakemake runs locally but submits jobs to cluster
 
 ```
-./snakejob -s Snakefile -c config.yaml -m <mode> 
+./snakejob -s Snakefile -c config.yaml
+
+Usage: ./snakejob -c config.yaml -s Snakefile
+Options:
+    -c config file (default: config.yaml)
+    -s Snakefile (default: Snakefile)
+    -n dry run mode
+    -m mode (if your pipeline requires a mode variable using --config)
+    -a which HPC account to run on (default: acc_als-omics)
 ```
 
 2. snakemake runs as a job on the cluster and submits further jobs to the cluster
 
 ```
-./snakejob_HPC -s Snakefile -c config.yaml -m <mode>
+./snakejob_HPC -s Snakefile -c config.yaml
+Options:
+    -c config file (default: config.yaml)
+    -s Snakefile (default: Snakefile)
+    -a cluster account (default: acc_als-omics)
+    -q queue to submit to (default: premium)
+    -t time of submission (default: 24:00)
+    -m mode (if your Snakefile takes a mode value with --config)
 ```
 
 <mode> is optional, this is used by the QTL pipeline to set a config parameter when running pipeline, rather than through the config file.

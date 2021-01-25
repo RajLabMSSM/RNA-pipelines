@@ -1,58 +1,30 @@
-# submit snakejob as a job
+JOBSCRIPT=snakejob
 
-#!/bin/bash
-#BSUB -J snakejob_job
-#BSUB -P acc_als-omics
-#BSUB -q express
-#BSUB -n 1
-#BSUB -R span[hosts=1]
-#BSUB -W 12:00
-#BSUB -R rusage[mem=3000]
-#BSUB -o cluster/%J.stdout
-#BSUB -eo cluster/%J.stderr
-#BSUB -L /bin/bash
+# default options
+ACCOUNT=acc_als-omics
+QUEUE=premium
+SNAKEFILE=Snakefile
+CONFIG=config.yaml
+WALLTIME="24:00"
+MODE="False"
 
 
 print_usage() {
-  printf "Usage: bsub < snakejob_HPC [-h] [-c] config file [-s] Snakefile\nOptions:\n\t-c file listing paths to config files\n\t-s Snakefile\n\t-n dry run mode\n\t-m mode [eQTL/sQTL]\n"
+  printf "Usage: ./snakejob_HPC \nOptions:\n\t-c config file (default: config.yaml)\n\t-s Snakefile (default: Snakefile)\n\t-a cluster account (default: acc_als-omics)\n\t-q queue to submit to (default: premium)\n\t-t time of submission (default: 24:00)\n\t-m mode (if your Snakefile takes a mode value with --config)\n\\n"
 }
 
-snakefile=Snakefile
-
-while getopts 'c:s:m:nh' flag; do
+# read in options from command line
+while getopts 'a:c:s:m:q:t:inh' flag; do
   case "${flag}" in
-    c) config="${OPTARG}" ;;
-    s) snakefile="${OPTARG}" ;;
-    m) mode="${OPTARG}" ;;
-    n) dryrun="-n" ;;
+    s) SNAKEFILE="${OPTARG}" ;;
+    c) CONFIG="${OPTARG}" ;;
+    a) ACCOUNT="${OPTARG}" ;;
+    q) QUEUE="${OPTARG}" ;;
+    t) WALLTIME="${OPTARG}" ;;
     h) print_usage
        exit 1 ;;
   esac
 done
 
-echo config used is $config
-echo snakefile used is $snakefile 
-echo mode is $mode
-
-if [ ! -z "$dryrun" ];then
-    echo "dry run mode" 
-fi
-
-if [ ! -e $config ]; then
-    echo "error: config file does not exist"  
-    exit 0
-fi
-
-if [ ! -e $snakefile ]; then
-    echo "error: snakefile does not exist" 
-    exit 0
-fi
-
-
-
-source activate QTL-pipeline
-
-snakemake -s $snakefile --configfile $config --unlock --config mode=$mode --quiet
-# fixes phenomenon with updated input files - weird quirk of pipeline when running again
-snakemake -s $snakefile --configfile $config --touch --config mode=$mode --quiet
-./snakejob -s Snakefile -c $config -m $mode 
+# submit job
+bsub -P $ACCOUNT -W $WALLTIME -n 1 -q $QUEUE -oo cluster/snakejob_HPC.stdout -eo cluster/snakejob_HPC.stderr -L /bin/bash  "sh $JOBSCRIPT -s $SNAKEFILE -c $CONFIG -a $ACCOUNT -m $MODE "

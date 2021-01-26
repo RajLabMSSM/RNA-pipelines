@@ -55,6 +55,7 @@ fi
 
 bsub=("bsub -K -J $jname:{rule}:{wildcards}"
 "-P $ACCOUNT "
+"{cluster.himem}"
 "-q {cluster.queue} "
 "-n {cluster.cores} -R \"span[hosts=1] select[mem>{cluster.mem}]"
 "rusage[mem={cluster.mem}]\" -W {cluster.time} -L /bin/bash"

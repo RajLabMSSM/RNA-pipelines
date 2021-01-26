@@ -7,6 +7,7 @@ __default__:
   name: $(basename $(pwd)):{rule}:{wildcards}
   output: logs/{rule}:{wildcards}.stdout
   error: logs/{rule}:{wildcards}.stderr
+  himem: "" # for rules with high memory set himem: "-R himem"
 QTLtools_nominal:
     cores: 1
     mem: 3750

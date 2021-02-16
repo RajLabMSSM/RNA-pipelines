@@ -7,6 +7,8 @@ if [ ! -d "cluster" ]; then
   mkdir cluster
 fi
 
+snakemake --version
+
 curdir="$(pwd)"
 jname="$(basename $curdir)"
 
@@ -64,7 +66,7 @@ bsub=("bsub -K -J $jname:{rule}:{wildcards}"
 
 snakemake -u cluster.yaml --cluster-sync "${bsub[*]}" \
   --local-cores 4 --max-jobs-per-second 5 \
-  --jobs 1000 \
+  --jobs 500 \
   --restart-times 0 \
   -s $snakefile --configfile $config \
   --latency-wait 30 --rerun-incomplete \

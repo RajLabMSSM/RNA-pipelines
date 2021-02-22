@@ -3,84 +3,55 @@ import os
 RWD = os.getcwd()
 
 inFolder = config['inFolder']
-# create outFolder path using dataCode
-#outFolder = config['outFolder'] + config['dataCode'] + '/'
 
-#refCondition = config['refCondition']
-#altCondition = config['altCondition']
 
 outFolder = config['outFolder']
 dataCode = config['dataCode']
-# annotation
-#refFolder = config['refFolder']
-#refFile = config['refFile']
-#refCode = config['refCode']
 
-#rapidVersion = config['rapidVersion']
 
 stranded = config["stranded"]
 nBootstraps =  config["nBootstraps"]
 
 metadata = config['metadata']
 
-meta = pd.read_csv(metadata, sep = "\t")
+meta = pd.read_csv(metadata)
 
 samples = meta['sample']
 
-# put together file paths
-#kallisto_counts = meta['rapid_path'] + "/Processed/" + rapidVersion + "/kallisto/abundance.h5"
 
-# allow for choosing of modules
-#modules = config['modules']
-#target_files = [ outFolder + "config.yaml", metadata ]
 
 fastaFiles = config['fastaFiles']
 
-#kallisto_out = outFolder + "kallisto_sleuth/" + dataCode + "_results.RData"
-#target_files.append(kallisto_out)
-
-#localrules: copyConfig
 
 rule all:
     input:
-        expand(outFolder + "{fasta}_kallisto_counts.RData", fasta = fastaFiles ),
-        expand(outFolder + "{fasta}_kallisto_matrix.RData", fasta = fastaFiles ),
-        outFolder + "run_info_collated.tsv"
-        #expand("{outFolder}/{fasta}.index", outFolder = outFolder, fasta = fastaFiles)
+        expand(outFolder + "/{fasta}_kallisto_counts.RData", fasta = fastaFiles ),
+        expand(outFolder + "/{fasta}_kallisto_matrix.RData", fasta = fastaFiles ),
+        outFolder + "/run_info_collated.tsv"
 
-#rule copyConfig:
- #   input:
-  #      config = workflow.overwrite_configfile,
-   #     metadata = metadata
 
-    #output:
-     #   config = outFolder + "config.yaml",
-      #  metadata = outFolder + "samples.tsv"
-    #shell:
-     #   "cp {input.config} {output.config};"
-      #  "cp {input.metadata} {output.metadata}"
 
 rule kallisto_index:
     input:
         file=lambda wildcards: f"{config['fastaFiles'][wildcards.fasta]}"
     output:
-        "indexes/{fasta}.index"
+        outFolder + "/indexes/{fasta}.index"
     shell:
         "ml kallisto;"
         "kallisto index -i {output} {input}"
 
 rule kallisto_quant:
     input:
-        index = "indexes/{fasta}.index",
-        r1_fastq_gz = inFolder + '{sample}.R1.fastq.gz',
-        r2_fastq_gz = inFolder + '{sample}.R2.fastq.gz'
+        index = outFolder + "/indexes/{fasta}.index",
+        r1_fastq_gz = inFolder + '/{sample}_R1_001.fastq.gz',
+        r2_fastq_gz = inFolder + '/{sample}_R2_001.fastq.gz'
     params:
         stranded = stranded,
         nBootstraps = nBootstraps,
-        quantOutFolder = outFolder + "{sample}/{fasta}/"
+        quantOutFolder = outFolder + "/{sample}/{fasta}/"
     output:
-        abundance = outFolder + "{sample}/{fasta}/abundance.h5",
-        runInfo = outFolder + "{sample}/{fasta}/run_info.json"
+        abundance = outFolder + "/{sample}/{fasta}/abundance.h5",
+        run_info = outFolder + "/{sample}/{fasta}/run_info.json"
     shell:
         "ml kallisto; "
         "kallisto quant "
@@ -90,14 +61,14 @@ rule kallisto_quant:
         " -o {params.quantOutFolder} "
         " {input.r1_fastq_gz} "
         " {input.r2_fastq_gz}; "
-        # test file was created
-        " h5ls {output.abundance}"
+        " h5ls {output.abundance} "
 rule kallisto_collate:
     input:
-        expand("{outFolder}{sample}/{fasta}/abundance.h5", outFolder = outFolder, sample = samples,allow_missing=True)
+        expand("{outFolder}/{sample}/{fasta}/abundance.h5", outFolder = outFolder, fasta = fastaFiles, sample = samples),
+        expand("{outFolder}/{sample}/{fasta}/run_info.json", outFolder = outFolder, fasta = fastaFiles, sample = samples)
     output:
-        outFolder + "{fasta}_kallisto_counts.RData",
-        outFolder + "{fasta}_kallisto_matrix.RData"
+        outFolder + "/{fasta}_kallisto_counts.RData",
+        outFolder + "/{fasta}_kallisto_matrix.RData"
     params:
         script = "scripts/collate_kallisto.R",
     shell:
@@ -106,9 +77,9 @@ rule kallisto_collate:
 
 rule run_info_collate:
     input:
-        expand("{outFolder}{sample}/{fasta}/run_info.json", outFolder = outFolder, fasta = fastaFiles, sample = samples)
+        expand("{outFolder}/{sample}/{fasta}/run_info.json", outFolder = outFolder, fasta = fastaFiles, sample = samples)
     output:
-        outFolder + "run_info_collated.tsv"
+        outFolder + "/run_info_collated.tsv"
     params:
         script = "scripts/collate_run_info.R"
     shell:

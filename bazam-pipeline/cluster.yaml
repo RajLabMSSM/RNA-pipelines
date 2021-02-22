@@ -1,12 +1,15 @@
 __default__:
-  #partition: chimera
   queue: premium
   cores: 1
-  mem: 3750
+  mem: 3000
   time: '180'
   name: $(basename $(pwd)):{rule}:{wildcards}
   output: logs/{rule}:{wildcards}.stdout
   error: logs/{rule}:{wildcards}.stderr
+  himem: ""
 indexBam:
   time: '60'
-
+ben:
+    cores: 16
+    mem: 3000
+    

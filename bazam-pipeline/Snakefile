@@ -5,21 +5,21 @@
 #import pandas as pd
 #samples = pd.read_csv(metadata, sep = '\t')['sample']
 
-shell.prefix('export PS1="";source activate bazam-pipeline;')
-
 inFolder = config['inFolder']
 outFolder = config['outFolder']
-
 bamSuffix = config['bamSuffix']
 
 # get BAM files from inFolder using glob
 import glob
 import os
+# potential improvement - go deeper with glob if no bam files are in inFolder
 samples = [os.path.basename(x).strip(bamSuffix) for x in glob.glob(inFolder + "/*" + bamSuffix)]
 
+#print(samples)
+#print(bamSuffix)
 
-print(samples)
-print(bamSuffix)
+shell.prefix('export PS1=""; ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge; conda activate snakemake;')
+
 
 rule all:
 	input: 

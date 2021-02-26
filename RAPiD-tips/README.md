@@ -35,27 +35,41 @@ TBD
 Running on example data
 -----------------------
 
+*Please report any issues encountered to Ben*
+
 Clone the RAPiD-nf repo
 
 ```
-git clone git@github.com:genomely/RAPiD-nf.git
+git clone https://github.com/genomely/RAPiD-nf.git
 cd RAPiD-nf
 ```
 
-RAPiD works on FASTQ files as input. Assume you have a list of FASTQ files with the format SAMPLE1_R1.fastq.gz, SAMPL1_R2.fastq.gz.
+RAPiD works on FASTQ files as input. Assume you have a directory of FASTQ files with the suffix fastq.gz. RAPiD requires the FASTQ files to have a specific directory structure. The scripts `create_fastq_key.R` and `create_rapid_structure.py` will arrange them accordingly.
 
-First symlink all FASTQ files to a directory called fastq/
 
+Run `create_fastq_key.R` - this will output a file called `sample_fastq_table.tsv` in the same dir, consisting of a sample key for you with three columns - sample, f1, f2 (read 1 and read 2).
+
+`create_fastq_key` has 3 new parameters:
+
+`-i` --> inFolder. The directory containing all FASTQ files
+
+`-e` --> endName1. The word in the file name used to denote which end read (R1, END1, etc.)
+
+`-f` --> endName2. The word in the file name used to denote the other end read (R2, END2, etc.)
+
+load R with:
 ```
-for i in $(cat my_files.txt); do
-    ln -s $i fastq/
-done
+ml R/3.6.0
+```
+run using:
+```
+Rscript create_fastq_key.R -i fastq/ -e R1 -f R2
 ```
 
-Then run `create_fastq_key.R` - this creates a sample key for you with three columns - sample, f1, f2 (read 1 and read 2).
-
-
-Then run `create_rapid_structure.py` - this creates the directory structure RAPiD-nf expects.
+Then run `create_rapid_structure.py` - this takes the `sample_fastq_table.tsv` as input and creates the directory structure RAPiD-nf expects:
+```
+python create_rapid_structure.py sample_fastq_table.tsv
+```
  
 ### Running on Chimera
 
@@ -69,13 +83,20 @@ screen -S RAPiD
 
 You can run RAPiD like so:
 
-```
-bsub -I -n 2 -W 24:00 -q premium -P acc_als-omics -R rusage[mem=3750] -R span[hosts=1] "/sc/hydra/projects/PBG/nextflow/bin/nextflow run RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded reverse -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --trimAdapter --rawPath Raw/Illumina -resume"
-```
+Please keep in mind the folowing important options when submitting the job:
 
-You can also submit to express instead of premium. Edit config/lsf.config to swap out premium for express.
+`-P` --> your account code (ex. `acc_ad-omics`).
 
-``` bsub -I -n 2 -W 12:00 -q express -P acc_als-omics -R rusage[mem=3750] -R span[hosts=1] "/sc/hydra/projects/PBG/nextflow/bin/nextflow run RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded reverse -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --trimAdapter --rawPath Raw/Illumina -resume"
+`/path/to/RAPiD-nf/RAPiD.nf` --> the path to the RAPiD.nf file inside the RAPiD-nf folder.
+
+`--stranded` --> if your reads are stranded (`none`,`reverse`,`forward`).
+
+`--trimAdapter` --> which adapter was used (`NexteraPE-PE`, `TruSeq2-PE`, `TruSeq2-SE`, `TruSeq3-PE-2`, `TruSeq3-PE`, `TruSeq3-SE`).
+
+`-q` - we suggest using the `long` queue.
+
+```
+bsub -I -n 2 -W 144:00 -q long -P <account_code> -R rusage[mem=3750] -R span[hosts=1] "/sc/arion/projects/H_PBG/nextflow/bin/nextflow run /path/to/RAPiD-nf_1/RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded none -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --kallisto --salmon --trimAdapter NexteraPE-PE --rawPath Raw/Illumina -resume
 ```
 
 

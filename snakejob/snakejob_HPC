@@ -1,4 +1,4 @@
-JOBSCRIPT=snakejob
+JOBSCRIPT=~/bin/snakejob
 
 # default options
 ACCOUNT=acc_als-omics

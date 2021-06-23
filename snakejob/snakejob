@@ -69,5 +69,5 @@ snakemake -u cluster.yaml --cluster-sync "${bsub[*]}" \
   --jobs 500 \
   --restart-times 0 \
   -s $snakefile --configfile $config \
-  --latency-wait 30 --rerun-incomplete \
+  --latency-wait 30 --rerun-incomplete --use-conda \
   $dryrun \

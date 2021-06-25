@@ -1,0 +1,83 @@
+import pandas as pd
+import os
+RWD = os.getcwd()
+
+inFolder = config['inFolder']
+
+
+outFolder = config['outFolder']
+dataCode = config['dataCode']
+
+
+
+nBootstraps =  config["nBootstraps"]
+
+metadata = config['metadata']
+
+meta = pd.read_csv(metadata, sep = ';')
+
+
+samples = meta['sample']
+metadata_dict = meta.set_index("sample").T.to_dict()
+
+stranded = config["stranded"]
+
+
+fastaFiles = config['fastaFiles']
+
+rule all:
+    input:
+        expand(outFolder + "/{fasta}_kallisto_counts.RData", fasta = fastaFiles ),
+        expand(outFolder + "/{fasta}_kallisto_matrix.RData", fasta = fastaFiles ),        
+        outFolder + "/run_info_collated.tsv"
+rule kallisto_index:
+    input:
+        file=lambda wildcards: f"{config['fastaFiles'][wildcards.fasta]}"
+    output:
+        outFolder + "/indexes/{fasta}.index"
+    shell:
+        "ml kallisto;"
+        "kallisto index -i {output} {input}"
+
+rule kallisto_quant:
+    input:       
+        index = outFolder + "/indexes/{fasta}.index"
+    params:
+        stranded = stranded,
+        nBootstraps = nBootstraps,
+        quantOutFolder = outFolder + "/{sample}/{fasta}/"
+    output:
+        abundance = outFolder + "/{sample}/{fasta}/abundance.h5",
+        run_info = outFolder + "/{sample}/{fasta}/run_info.json"
+    run:        
+        r1_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1"])
+        r2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2"])
+
+        shell("ml kallisto; kallisto quant -i {input.index} -o kallisto.{wildcards.sample} \
+        {r1_file} {r2_file} {params.stranded} \
+        --bootstrap-samples={params.nBootstraps} -o {params.quantOutFolder} ")
+        shell(" h5ls {output.abundance} ")
+ 
+rule kallisto_collate:
+    input:
+        expand("{outFolder}/{sample}/{fasta}/abundance.h5", outFolder = outFolder, fasta = fastaFiles, sample = samples),
+        expand("{outFolder}/{sample}/{fasta}/run_info.json", outFolder = outFolder, fasta = fastaFiles, sample = samples)
+    output:
+        outFolder + "/{fasta}_kallisto_counts.RData",
+        outFolder + "/{fasta}_kallisto_matrix.RData"
+    params:
+        script = "scripts/collate_kallisto.R",
+    shell:
+        "ml R/3.6.0;"
+        "Rscript {params.script} {outFolder} {wildcards.fasta}"
+
+rule run_info_collate:
+    input:
+        expand("{outFolder}/{sample}/{fasta}/run_info.json", outFolder = outFolder, fasta = fastaFiles, sample = samples)
+    output:
+        outFolder + "/run_info_collated.tsv"
+    params:
+        script = "scripts/collate_run_info.R"
+    shell:
+        "ml R/3.6.0;"
+        "Rscript {params.script} {outFolder}"

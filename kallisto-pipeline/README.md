@@ -33,7 +33,7 @@ metadata.csv - metadata file consisting of columns: sampleID, R1, R2, stranded
 config.yaml - see `example/config.yaml`
 
 ### assumed use case
-you have a set of FASTQ files with the forms <sample>.R1.fastq.gz and <sample>.R2.fastq.gz for each <sample>. `metadata.csv` is a four column text file with a column named `sample` with a set of sample IDs, a column named 'R1' with the fastq file name for pair end one, a column named 'R2' with the fastq file name for pair read two, and a column named 'stranded' defining if a sample is stranded (specifying forward or reverse) or unstranded.
+you have a set of FASTQ files with the forms <sample>.R1.fastq.gz and <sample>.R2.fastq.gz for each <sample>. `metadata.csv` is a four column text file with a column named `sample` with a set of sample IDs, a column named `R1` with the fastq file name for pair end one, a column named `R2` with the fastq file name for pair read two, and a column named `stranded` defining if a sample is stranded (specifying forward or reverse) or unstranded.
 
 you also have one or more transcript sets (in FASTA format) that you want to quantify for your samples. Specify these in the `config.yaml`.
 

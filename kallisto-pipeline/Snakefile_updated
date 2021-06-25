@@ -30,6 +30,7 @@ rule all:
         expand(outFolder + "/{fasta}_kallisto_counts.RData", fasta = fastaFiles ),
         expand(outFolder + "/{fasta}_kallisto_matrix.RData", fasta = fastaFiles ),        
         outFolder + "/run_info_collated.tsv"
+        
 rule kallisto_index:
     input:
         file=lambda wildcards: f"{config['fastaFiles'][wildcards.fasta]}"

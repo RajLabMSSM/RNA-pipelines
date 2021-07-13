@@ -9,27 +9,29 @@ outFolder = config['outFolder']
 dataCode = config['dataCode']
 
 
-stranded = config["stranded"]
+
 nBootstraps =  config["nBootstraps"]
 
 metadata = config['metadata']
 
-meta = pd.read_csv(metadata)
+meta = pd.read_csv(metadata, sep = ';')
+
 
 samples = meta['sample']
 
 
+metadata_dict = meta.set_index("sample").T.to_dict()
+
+stranded = config["stranded"]
+
 
 fastaFiles = config['fastaFiles']
-
 
 rule all:
     input:
         expand(outFolder + "/{fasta}_kallisto_counts.RData", fasta = fastaFiles ),
-        expand(outFolder + "/{fasta}_kallisto_matrix.RData", fasta = fastaFiles ),
+        expand(outFolder + "/{fasta}_kallisto_matrix.RData", fasta = fastaFiles ),        
         outFolder + "/run_info_collated.tsv"
-
-
 
 rule kallisto_index:
     input:
@@ -41,10 +43,8 @@ rule kallisto_index:
         "kallisto index -i {output} {input}"
 
 rule kallisto_quant:
-    input:
-        index = outFolder + "/indexes/{fasta}.index",
-        r1_fastq_gz = inFolder + '/{sample}_R1_001.fastq.gz',
-        r2_fastq_gz = inFolder + '/{sample}_R2_001.fastq.gz'
+    input:       
+        index = outFolder + "/indexes/{fasta}.index"
     params:
         stranded = stranded,
         nBootstraps = nBootstraps,
@@ -52,16 +52,19 @@ rule kallisto_quant:
     output:
         abundance = outFolder + "/{sample}/{fasta}/abundance.h5",
         run_info = outFolder + "/{sample}/{fasta}/run_info.json"
-    shell:
-        "ml kallisto; "
-        "kallisto quant "
-        " -i {input.index} "
-        " --bootstrap-samples={params.nBootstraps} "
-        " {params.stranded} "       
-        " -o {params.quantOutFolder} "
-        " {input.r1_fastq_gz} "
-        " {input.r2_fastq_gz}; "
-        " h5ls {output.abundance} "
+    run:	
+
+        r1_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1"])
+        r2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2"])
+        #r1_file_B = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1_2"])
+        #r2_file_B = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2_2"])
+	#stranded = metadata_dict[wildcards.sample]["stranded"]	
+
+        shell("ml kallisto; kallisto quant -i {input.index} -o kallisto.{wildcards.sample} \
+        {r1_file} {r2_file} {params.stranded} \
+        --bootstrap-samples={params.nBootstraps} -o {params.quantOutFolder} ")
+        shell(" h5ls {output.abundance} ")
+
 rule kallisto_collate:
     input:
         expand("{outFolder}/{sample}/{fasta}/abundance.h5", outFolder = outFolder, fasta = fastaFiles, sample = samples),

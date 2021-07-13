@@ -21,7 +21,7 @@ tx_files <- list.files(path = outFolder, pattern = "abundance.h5", full.names = 
 # take just those within the provided index folder
 tx_files <- tx_files[ grepl(index, tx_files) ]
 print(tx_files[1:20])
-sample_ids <- stringr::str_split_fixed(tx_files, "/", 4)[,3]
+sample_ids <- stringr::str_split_fixed(tx_files, "/", 11)[,10]
 
 stopifnot(length(sample_ids) == length(tx_files) )
 

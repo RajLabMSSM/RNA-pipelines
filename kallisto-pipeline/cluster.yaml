@@ -7,12 +7,13 @@ __default__:
   name: $(basename $(pwd)):{rule}:{wildcards}
   output: logs/{rule}:{wildcards}.stdout
   error: logs/{rule}:{wildcards}.stderr
+  himem: ''
 kallisto_index:
   time: '120'
   cores: 16
   mem: 3750
 kallisto_quant:
-  time: '240'
+  time: '720'
   cores: 8
   mem: 3750
 kallisto_collate:

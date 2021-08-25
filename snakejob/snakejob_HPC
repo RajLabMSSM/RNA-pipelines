@@ -6,7 +6,7 @@ QUEUE=premium
 SNAKEFILE=Snakefile
 CONFIG=config.yaml
 WALLTIME="24:00"
-MODE="False"
+MODE="Null"
 
 
 print_usage() {
@@ -20,11 +20,16 @@ while getopts 'a:c:s:m:q:t:inh' flag; do
     c) CONFIG="${OPTARG}" ;;
     a) ACCOUNT="${OPTARG}" ;;
     q) QUEUE="${OPTARG}" ;;
+    m) MODE="${OPTARG}" ;;
     t) WALLTIME="${OPTARG}" ;;
     h) print_usage
        exit 1 ;;
   esac
 done
 
+echo "mode used is $MODE"
+echo "config is $CONFIG"
+
+
 # submit job
-bsub -P $ACCOUNT -W $WALLTIME -n 1 -q $QUEUE -oo cluster/snakejob_HPC.stdout -eo cluster/snakejob_HPC.stderr -L /bin/bash  "sh $JOBSCRIPT -s $SNAKEFILE -c $CONFIG -a $ACCOUNT -m $MODE "
+bsub -R rusage[mem=3000] -P $ACCOUNT -W $WALLTIME -n 2 -q $QUEUE -oo cluster/snakejob_HPC.stdout -eo cluster/snakejob_HPC.stderr -L /bin/bash  "sh $JOBSCRIPT -s $SNAKEFILE -c $CONFIG -a $ACCOUNT -m $MODE "

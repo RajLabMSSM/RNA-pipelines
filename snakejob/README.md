@@ -1,5 +1,7 @@
 # SNAKEJOB - running snakemake pipelines on Minerva
 
+Currently trying to make work for snakemake v6.5.0
+
 Assumes you have a cluster.yaml file written for your pipeline. See example file.
 
 Each rule must have resources listed in cluster.yaml.

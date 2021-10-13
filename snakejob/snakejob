@@ -28,7 +28,7 @@ while getopts 'a:c:s:m:inh' flag; do
     c) config="${OPTARG}" ;;
     s) snakefile="${OPTARG}" ;;
     a) ACCOUNT="${OPTARG}" ;;
-    m) MODE="${MODE}" ;;
+    m) MODE="${OPTARG}" ;;
     n) dryrun="-n" ;;
     h) print_usage
        exit 1 ;;
@@ -52,6 +52,12 @@ if [ ! -e $snakefile ]; then
 	echo "error: snakefile does not exist"
 	exit 0
 fi
+if [ ! -z "$MODE" ]; then
+    echo "mode selected: $MODE"
+    mode_variable=" --config mode=$MODE"
+else
+    mode_variable=""
+fi
 
 #exit 0 
 
@@ -60,7 +66,7 @@ bsub=("bsub -K -J $jname:{rule}:{wildcards}"
 "{cluster.himem}"
 "-q {cluster.queue} "
 "-n {cluster.cores} -R \"span[hosts=1] select[mem>{cluster.mem}]"
-"rusage[mem={cluster.mem}]\" -W {cluster.time} -L /bin/bash"
+"rusage[mem={cluster.mem}]\" -W {cluster.time} " #-L /bin/bash#\"
 "-oo cluster/{rule}_{wildcards}.stdout"
 "-eo cluster/{rule}_{wildcards}.stderr < ")
 
@@ -68,7 +74,9 @@ snakemake -u cluster.yaml --cluster-sync "${bsub[*]}" \
   --use-conda --cores \
   --local-cores 4 --max-jobs-per-second 5 \
   --jobs 500 \
-  --restart-times 0 \
+  --rerun-incomplete \
+  --restart-times 2 \
   -s $snakefile --configfile $config \
   --latency-wait 30 --rerun-incomplete --use-conda \
   $dryrun \
+  $mode_variable

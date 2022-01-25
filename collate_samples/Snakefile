@@ -36,7 +36,7 @@ rule getMatrices:
         outFolder = outFolder,
         script = scriptFolder + "collate_tables.R"
     shell:
-        "ml R/3.6.0;"
+        "ml R/4.0.3;"
         "Rscript {params.script} {params.inFolder} {params.outFolder}"
 
 rule multiQC:
@@ -45,9 +45,10 @@ rule multiQC:
     params:
         out = outFolder + ""
     shell:
-        "export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
-        "export PS1=""; source activate differential-pipeline;"
-        "multiqc  -f --outdir {params.out} {inFolder}"
+        #"export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
+        #"export PS1=""; source activate snakemake;"
+        "export PS1=""; ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge;"
+        "conda activate snakemake; multiqc  -f --outdir {params.out} {inFolder}"
 
         #"/hpc/packages/minerva-centos7/py_packages/3.7/bin/"
 
@@ -66,5 +67,5 @@ rule normalise_genes:
         out = outFolder + "",
         script = scriptFolder + "normalise_genes.R"
     shell:
-        "ml R/3.6.0;"
+        "ml R/4.0.3;"
         "Rscript {params.script} {input} {params.out}"  

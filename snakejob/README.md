@@ -17,8 +17,8 @@ Make snakejob and snakejob_HPC executable and findable on your `$PATH`
 ```
 chmod +x snakejob
 chmod +x snakejob_HPC
-ln -s $PWD/snakejob /usr/bin/
-ln -s $PWD/snakejob_HPC /usr/bin/
+ln -s $PWD/snakejob ~/bin/
+ln -s $PWD/snakejob_HPC ~/bin/
 ```
 
 ## Running options

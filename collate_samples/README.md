@@ -4,6 +4,8 @@ Create matrices of gene and isoform expression values following a RAPiD run.
 
 Written in snakemake and R (3.6.0)
 
+R/3.6.0 and tximport 1.12 supported, currently R/4.0.3 with tximport 1.18 doesn't work.
+
 R dependencies:
 
 * tximport
@@ -19,6 +21,5 @@ R dependencies:
 
 3. load snakemake (within a conda environment)
 
-4a. local execution: snakemake -s Snakefile
+4. local execution: snakemake -s Snakefile
 
-4b. parallel execution: ./snakejob (experimental)

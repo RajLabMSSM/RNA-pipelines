@@ -1,5 +1,6 @@
 
 # Snakemake pipeline for combining data from multiple samples together
+R_VERSION="R/3.6.0" # R 4.0.3 doesn't work for some reason
 
 # where the scripts are - default within the pipeline folder
 scriptFolder = "scripts/"
@@ -36,7 +37,7 @@ rule getMatrices:
         outFolder = outFolder,
         script = scriptFolder + "collate_tables.R"
     shell:
-        "ml R/4.0.3;"
+        "ml {R_VERSION};"
         "Rscript {params.script} {params.inFolder} {params.outFolder}"
 
 rule multiQC:
@@ -67,5 +68,5 @@ rule normalise_genes:
         out = outFolder + "",
         script = scriptFolder + "normalise_genes.R"
     shell:
-        "ml R/4.0.3;"
+        "ml {R_VERSION};"
         "Rscript {params.script} {input} {params.out}"  

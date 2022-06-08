@@ -1,0 +1,14 @@
+__default__:
+  #partition: chimera
+  queue: express
+  cores: 1
+  mem: 3750
+  time: '180'
+  name: $(basename $(pwd)):{rule}:{wildcards}
+  output: logs/{rule}:{wildcards}.stdout
+  error: logs/{rule}:{wildcards}.stderr
+  himem: ''
+STAR_fusion:
+  time: '360'
+  cores: 4
+  mem: 10000

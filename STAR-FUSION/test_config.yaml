@@ -1,0 +1,5 @@
+# STAR FUSION
+
+metadata: "test_samples.tsv"
+
+outFolder: "/sc/arion/projects/als-omics/microglia_isoseq/STAR_FUSION/test"

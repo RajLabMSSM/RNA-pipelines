@@ -1,2 +1,2 @@
-sample	R1	R2
-MGB_092	/sc/arion/projects/ad-omics/data/gaffney_microglia/RAPiD-nf/RNA_FASTQ/MGB_092.R1.fastq.gz	/sc/arion/projects/ad-omics/data/gaffney_microglia/RAPiD-nf/RNA_FASTQ/MGB_092.R2.fastq.gz
+sample;R1;R2
+MGB_092;/sc/arion/projects/ad-omics/data/gaffney_microglia/RAPiD-nf/RNA_FASTQ/MGB_092.R1.fastq.gz;/sc/arion/projects/ad-omics/data/gaffney_microglia/RAPiD-nf/RNA_FASTQ/MGB_092.R2.fastq.gz

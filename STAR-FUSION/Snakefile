@@ -7,11 +7,12 @@ import pandas as pd
 CTAT_LIB = '/sc/arion/projects/ad-omics/data/references/CTAT/GRCh38_gencode_v37_CTAT_lib_Mar012021/ctat_genome_lib_build_dir'
 
 print(config)
+inFolder = config['inFolder']
 outFolder = config['outFolder']
 metadata = config['metadata']
 dataCode = config['dataCode']
 
-meta = pd.read_csv(metadata, sep = '\t')
+meta = pd.read_csv(metadata, sep = ';')
 
 print(meta)
 
@@ -19,23 +20,28 @@ samples = meta['sample']
 
 metadata_dict = meta.set_index("sample").T.to_dict()
 
+# STAR-Fusion needs regular perl, not snakemake conda environment version of perl
 shell.prefix('ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge; conda deactivate;')
 
 rule all:
     input:
-        expand("{outFolder}/{SAMPLE}/star-fusion.fusion_predictions.tsv", outFolder = outFolder, SAMPLE = samples)
+        counts = outFolder + "/" + dataCode + "_fusion_counts.tsv.gz"
+        #meta = "{outFolder}/{dataCode}_fusion_meta.tsv.gz"
+        #expand("{outFolder}/{SAMPLE}/star-fusion.fusion_predictions.tsv", outFolder = outFolder, SAMPLE = samples)
 
 rule STAR_fusion:
     output:
         "{outFolder}/{SAMPLE}/star-fusion.fusion_predictions.tsv"
     run:
 
-        r1_file = os.path.join(metadata_dict[wildcards.SAMPLE]["R1"])
-        r2_file = os.path.join(metadata_dict[wildcards.SAMPLE]["R2"])
+        r1_file = os.path.join(inFolder, metadata_dict[wildcards.SAMPLE]["R1"])
+        r2_file = os.path.join(inFolder, metadata_dict[wildcards.SAMPLE]["R2"])
         shell("ml star-fusion;\
              STAR-Fusion --genome_lib_dir {CTAT_LIB} \
              --left_fq {r1_file} \
              --right_fq {r2_file} \
+             --no_annotation_filter  \
+             --FusionInspector inspect \
              --output_dir {outFolder}/{wildcards.SAMPLE}")
 
 rule collate:

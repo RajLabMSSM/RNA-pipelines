@@ -9,6 +9,7 @@ CTAT_LIB = '/sc/arion/projects/ad-omics/data/references/CTAT/GRCh38_gencode_v37_
 print(config)
 outFolder = config['outFolder']
 metadata = config['metadata']
+dataCode = config['dataCode']
 
 meta = pd.read_csv(metadata, sep = '\t')
 
@@ -41,8 +42,8 @@ rule collate:
     input:
         expand("{outFolder}/{SAMPLE}/star-fusion.fusion_predictions.tsv", outFolder = outFolder, SAMPLE = samples)
     output:
-        counts = "{outFolder}/{dataCode}.all_fusions_collated.tsv.gz",
-        meta = "{outFolder}/{dataCode}.all_fusions_annotation.tsv.gz"
+        counts = "{outFolder}/{dataCode}_fusion_counts.tsv.gz",
+        meta = "{outFolder}/{dataCode}_fusion_meta.tsv.gz"
     shell:
         "ml R/4.0.3;"
-        "Rscript collate_fusions.R --outFolder {outFolder}"
+        "Rscript collate_fusions.R --outFolder {outFolder} --dataCode {dataCode}"

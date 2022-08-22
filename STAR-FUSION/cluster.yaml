@@ -11,4 +11,4 @@ __default__:
 STAR_fusion:
   time: '360'
   cores: 4
-  mem: 10000
+  mem: 15000

@@ -1,0 +1,44 @@
+# snakemake pipeline for trimming FASTQs
+# Jack Humphrey
+
+import pandas as pd
+
+outFolder = config['outFolder']
+
+import os
+
+#data
+metadata =  pd.read_csv(config["metadata"], sep = "\t")
+samples = metadata['sample']
+metadata_dict = metadata.set_index('sample').T.to_dict()
+
+print(samples)
+
+shell.prefix('export PS1=""; ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge; conda activate snakemake;')
+
+
+rule all:
+	input: 
+		expand('{outFolder}/{sample}.trimmed.R{pair}.fastq.gz', outFolder = outFolder, sample = samples, pair = [1,2])
+
+
+rule cutadapt:
+    output:
+        r1 = "{outFolder}/{sample}.trimmed.R1.fastq.gz",
+        r2 = "{outFolder}/{sample}.trimmed.R2.fastq.gz"
+    run:
+        in_r1 = metadata_dict[wildcards.sample]["f1"]
+        in_r2 = metadata_dict[wildcards.sample]["f2"]
+        
+        shell("conda activate cutadaptenv; \
+            cutadapt \
+            -j 4 \
+            -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA \
+            -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT \
+            -g ACTTTGTGTTTGA \
+            -G ACTTTGTGTTTGA \
+            --nextseq-trim=20 \
+            -o {output.r1} -p {output.r2} \
+            {in_r1} {in_r2}"
+            ) 
+

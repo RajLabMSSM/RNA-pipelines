@@ -1,0 +1,9 @@
+sample	f1	f2
+13_13_Kminus_S2	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/13_13_Kminus_S2_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/13_13_Kminus_S2_R2_001.fastq.gz
+13_13_Kplus_S8	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/13_13_Kplus_S8_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/13_13_Kplus_S8_R2_001.fastq.gz
+15_10_Kminus_S4	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/15_10_Kminus_S4_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/15_10_Kminus_S4_R2_001.fastq.gz
+45_15_Kminus_S3	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/45_15_Kminus_S3_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/45_15_Kminus_S3_R2_001.fastq.gz
+70_15_Kminus_S5	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/70_15_Kminus_S5_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/70_15_Kminus_S5_R2_001.fastq.gz
+75_15_Kminus_S6	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/75_15_Kminus_S6_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/75_15_Kminus_S6_R2_001.fastq.gz
+78_06_Kminus_S1	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/78_06_Kminus_S1_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/78_06_Kminus_S1_R2_001.fastq.gz
+78_06_Kplus_S7	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/78_06_Kplus_S7_R1_001.fastq.gz	/sc/arion/projects/als-omics/hnRNPK/Gatt_FANS/run1_0722/fastq/78_06_Kplus_S7_R2_001.fastq.gz

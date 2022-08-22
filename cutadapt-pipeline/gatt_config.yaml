@@ -1,0 +1,4 @@
+# Ariana Gatt's FANS neurons
+
+outFolder: "/sc/arion/projects/als-omics/raw_data/PR0683_Gatt_FANS/trimming"
+metadata: "/hpc/users/humphj04/pipelines/RNA-pipelines/cutadapt-pipeline/gatt_sample_fq_table.tsv"

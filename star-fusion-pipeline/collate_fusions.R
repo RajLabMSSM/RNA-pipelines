@@ -22,8 +22,7 @@ meta_file <- paste0(outFolder, "/", dataCode,  "_fusion_meta.tsv.gz")
 
 message(" * Collating STAR-FUSION outputs" )
 
-# first find all abundance.h5 files
-files <- list.files(path = outFolder, pattern = "star-fusion.fusion_predictions.tsv", full.names = TRUE, recursive = TRUE)
+files <- list.files(path = outFolder, pattern = "star-fusion.fusion_predictions.abridged.tsv", full.names = TRUE, recursive = TRUE)
 
 # take just those within the provided index folder
 print(head(files) )
@@ -65,6 +64,37 @@ head(ffpm)
 
 message("* combining metadata!")
 head(meta)
+
+message("* sorting counts")
+
+ffpm <- column_to_rownames(ffpm,"ID")
+ffpm <- ffpm[ order( rowSums(!is.na(ffpm) )) , ]
+
+res <- tibble(
+    ID = row.names(ffpm), 
+    coverage = rowSums(!is.na(ffpm) ), 
+    mean_ffpm = rowMeans(ffpm, na.rm= TRUE) ) %>%
+    mutate(perc_coverage = coverage / ncol(ffpm) )
+
+meta <- meta %>%
+    mutate(type = case_when(
+        grepl("INTRA", annots) ~ "INTRACHROMOSOMAL",
+        grepl("INTER", annots) ~ "INTERCHROMOSOMAL"
+    ),  neighbours = grepl("NEIGH", annots),
+        conjoin_g = grepl("ConjoinG", annots),
+        paralogs = grepl("PARALOGS", annots)
+        
+    ) 
+
+
+res <- left_join(res, meta, by = "ID")
+
+res$gene_pair <- gsub("\\|.*", "", res$ID)
+
+res <- select(res, ID, gene_pair, coverage, perc_coverage, mean_ffpm, type, neighbours, conjoin_g, paralogs, annots)
+
+ffpm <- rownames_to_column(ffpm, "ID")
+
 
 ##write out 
 message(" * writing ", count_file)

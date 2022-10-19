@@ -4,8 +4,8 @@ __default__:
   mem: 3000
   time: '180'
   name: $(basename $(pwd)):{rule}:{wildcards}
-  output: logs/{rule}:{wildcards}.stdout
-  error: logs/{rule}:{wildcards}.stderr
+  output: cluster/{rule}:{wildcards}.stdout
+  error: cluster/{rule}:{wildcards}.stderr
   himem: ""
 cutadapt:
     cores: 4

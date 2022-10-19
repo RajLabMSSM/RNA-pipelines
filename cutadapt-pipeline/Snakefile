@@ -38,6 +38,7 @@ rule cutadapt:
             -g ACTTTGTGTTTGA \
             -G ACTTTGTGTTTGA \
             --nextseq-trim=20 \
+            --minimum-length=20 \
             -o {output.r1} -p {output.r2} \
             {in_r1} {in_r2}"
             ) 

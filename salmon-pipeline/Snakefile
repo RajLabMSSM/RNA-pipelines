@@ -1,0 +1,116 @@
+## Salmon pipeline
+## 01-11-23
+## Erica Brophy
+
+#load salmon
+#/sc/arion/projects/ad-omics/data/software/salmon-1.9.0_linux_x86_64/bin/salmon 
+
+
+import pandas as pd
+import os
+RWD = os.getcwd()
+
+#path to fastq files
+inFolder = config['inFolder']
+
+#output folder of counts 
+outFolder = config['outFolder']
+cohort = outFolder.split('/',9)[8]
+
+#annotations 
+annotations = config['annotations']
+
+#output of index files
+IndexOutFolder = config['IndexOutFolder']
+#nBootstraps =  config["nBootstraps"]
+
+#path to metadata
+metadata = config['metadata']
+#reading in metadata
+meta = pd.read_csv(metadata, sep = ';')
+#sample names into variable
+samples = meta['sample']
+#creating index using sample names
+metadata_dict = meta.set_index("sample").T.to_dict()
+#strandedness
+stranded = config["stranded"]
+#threads
+thread = config["threads"]
+#genome reference
+genome_fastaFiles = config['genome_fastaFiles']
+#transcriptome reference
+transcriptome_fastaFiles = config['transcriptome_fastaFiles']
+#refType - only included for GENCODE references
+refType = config['refType']
+#fastaType
+fastaType = config['fastaType']
+
+salmon = "/sc/arion/projects/ad-omics/data/software/salmon-1.9.0_linux_x86_64/bin/salmon"
+
+rule all:
+    input:
+        expand(outFolder + "/{cohort}_{fasta}_salmon_counts.RData", fasta = fastaType , cohort = cohort),
+        expand(outFolder + "/tpms/{cohort}/{cohort}_gene_tpm.tsv", cohort = cohort),
+        expand(outFolder + "/tpms/{cohort}/{cohort}_transcript_tpm.tsv", cohort = cohort)
+
+
+rule salmon_index:
+    input:
+        g_file = genome_fastaFiles,
+        t_file = transcriptome_fastaFiles
+    params:
+        IndexOutFolder = IndexOutFolder,
+        thread = thread,
+        refType = refType
+    output:
+        IndexOutFolder + "/gentrome.fa.gz"
+    run: 
+        shell("cd {params.IndexOutFolder};\
+              grep '^>' <(gunzip -c {input.g_file}) | cut -d ' ' -f 1 > decoys.txt; \
+              sed -i -e 's/>//g' decoys.txt; \
+              cat {input.t_file} {input.g_file} > gentrome.fa.gz; \
+              {salmon} index -t gentrome.fa.gz -d decoys.txt -p {params.thread} -i salmon_index")
+ 
+rule salmon_quant:
+    input: 
+        gentrome_file = IndexOutFolder + "/gentrome.fa.gz"
+    params:
+        stranded = stranded,
+        quantOutFolder = outFolder + "/{sample}/{fasta}/salmon_quant/",
+        transcripts_index = IndexOutFolder + "/salmon_index"
+    output:
+        quant = outFolder + "/{sample}/{fasta}/salmon_quant/quant.sf"
+    run: 
+        r1_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1"])
+        #r1_2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1_2"])
+        r2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2"])
+        #r2_2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2_2"])
+
+        shell("{salmon} quant -i {params.transcripts_index} \
+        -l {params.stranded}  -1 {r1_file} -2 {r2_file} --seqBias --gcBias --posBias --validateMappings -o {params.quantOutFolder} ")
+
+rule salmon_collate:
+    input:
+        expand("{outFolder}/{sample}/{fasta}/salmon_quant/quant.sf", outFolder = outFolder, fasta = fastaType, sample = samples, cohort = cohort)
+    params:
+        script = "scripts/collate_salmon.R",
+        outFolder = outFolder
+    output:
+        outFolder  + "/{cohort}_{fasta}_salmon_counts.RData"
+    shell:
+        "ml R/3.6.0;"
+        "Rscript {params.script} {outFolder} {wildcards.fasta}"
+
+
+rule salmon_tpm:
+    input:
+       expand(outFolder  + "/{cohort}_{fasta}_salmon_counts.RData", cohort = cohort, fasta = fastaType) 
+    params:
+       script = "scripts/tpms_salmon.R",
+       annotations = annotations
+    output:
+       outFolder + "/tpms/{cohort}/{cohort}_gene_tpm.tsv",
+       outFolder + "/tpms/{cohort}/{cohort}_transcript_tpm.tsv"
+    shell: 
+       "ml R/3.6.0;"
+       "Rscript {params.script} {outFolder} {annotations} {input}"

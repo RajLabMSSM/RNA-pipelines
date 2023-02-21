@@ -1,0 +1,22 @@
+__default__:
+  #partition: chimera
+  queue: express
+  cores: 1
+  mem: 3750
+  time: '180'
+  name: $(basename $(pwd)):{rule}:{wildcards}
+  output: logs/{rule}:{wildcards}.stdout
+  error: logs/{rule}:{wildcards}.stderr
+  himem: ''
+salmon_index:
+  time: '720'
+  cores: 16
+  mem: 6000
+salmon_quant:
+  time: '720'
+  cores: 16
+  mem: 6000
+salmon_collate:
+  time: '720'
+  cores: 8
+  mem: 6000

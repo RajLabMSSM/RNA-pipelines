@@ -1,0 +1,38 @@
+#config
+
+# directory containing FASTQs or symlinks to FASTQs
+# must be in format <sample>.R[12].fastq.gz
+inFolder: "/path/to/fastqs/*.fastq"
+
+# where to output the abundance estimates
+outFolder: "/path/to/outfolder/results_indexname/cohortname_results/"
+
+#annotations
+#make sure file contains columns named 1)transcript_ID and 2)gene_ID
+annotations: "/path/to/annotation/file/.gtf"
+
+#where to put index
+IndexOutFolder: "/path/to/index/output"
+
+# a list of sample IDs to use
+metadata: "/path/to/metadata"
+
+# was the RNA-seq library stranded?
+# -l IU, -l ISR, -l ISF , -l A for no stranded and to infer
+stranded: "A"
+
+# specify threads - recommended is 10 
+threads: 10
+
+#referency type - only specified for GENCODE
+refType: "gencode"
+
+#fastaType, reference name
+fastaType: "gencode"
+
+# specify which FASTA files to use as indexes
+# can use multiple indexes
+genome_fastaFiles:
+   gencodev38: "/path/to/genome/hg38.fa.gz"
+transcriptome_fastaFiles:
+   gencodev38: "/path/to/transcriptome/gencode.v38.transcripts.fa.gz"

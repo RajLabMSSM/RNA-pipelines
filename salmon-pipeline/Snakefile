@@ -15,7 +15,8 @@ inFolder = config['inFolder']
 
 #output folder of counts 
 outFolder = config['outFolder']
-cohort = outFolder.split('/',9)[8]
+#cohort = outFolder.split('/',9)[8]
+cohort = config['cohort']
 
 #annotations 
 annotations = config['annotations']

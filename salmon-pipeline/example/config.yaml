@@ -7,6 +7,9 @@ inFolder: "/path/to/fastqs/*.fastq"
 # where to output the abundance estimates
 outFolder: "/path/to/outfolder/results_indexname/cohortname_results/"
 
+#cohort name example
+cohort: "gaffney_results"
+
 #annotations
 #make sure file contains columns named 1)transcript_ID and 2)gene_ID
 annotations: "/path/to/annotation/file/.gtf"

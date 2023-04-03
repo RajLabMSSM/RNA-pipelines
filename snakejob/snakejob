@@ -67,8 +67,8 @@ bsub=("bsub -K -J $jname:{rule}:{wildcards}"
 "-q {cluster.queue} "
 "-n {cluster.cores} -R \"span[hosts=1] select[mem>{cluster.mem}]"
 "rusage[mem={cluster.mem}]\" -W {cluster.time} " #-L /bin/bash#\"
-"-oo cluster/{rule}_{wildcards}.stdout"
-"-eo cluster/{rule}_{wildcards}.stderr < ")
+"-oo cluster/{rule}_{wildcards}_${MODE}.stdout"
+"-eo cluster/{rule}_{wildcards}_${MODE}.stderr < ")
 
 echo ${bsub[*]}
 

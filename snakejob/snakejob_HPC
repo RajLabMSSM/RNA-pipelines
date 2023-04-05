@@ -32,4 +32,4 @@ echo "config is $CONFIG"
 
 
 # submit job
-bsub -R rusage[mem=12000] -P $ACCOUNT -W $WALLTIME -n 1 -q $QUEUE -oo cluster/snakejob_HPC.stdout -eo cluster/snakejob_HPC.stderr -L /bin/bash  "sh $JOBSCRIPT -s $SNAKEFILE -c $CONFIG -a $ACCOUNT -m $MODE "
+bsub -R rusage[mem=12000] -P $ACCOUNT -W $WALLTIME -n 1 -q $QUEUE -oo cluster/snakejob_HPC_$MODE.stdout -eo cluster/snakejob_HPC_$MODE.stderr -L /bin/bash  "sh $JOBSCRIPT -s $SNAKEFILE -c $CONFIG -a $ACCOUNT -m $MODE "

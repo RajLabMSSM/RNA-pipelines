@@ -27,6 +27,7 @@ Threads: _Specify threads to run, recommended is 10_
 	* **Must be zipped!**
 9. transcriptome_fastaFiles: _Path to transcriptome file_
 	* fasta.gz or fa.gz format
+10. cohort: _Cohort name_
 
 ## Output files
 

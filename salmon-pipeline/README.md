@@ -18,12 +18,11 @@ You will need to provide the following parameters in your config.yaml file:
 6. stranded: _The way the library was prepared, use "A" for salmon to infer_
 	* Unstranded: -l IU, Reverse stranded, -l ISR, Forward stranded, -l ISF , Unknown, salmon will infer: -l A 
 Threads: _Specify threads to run, recommended is 10_
-6. refType: "gencode"
+6. refType: _"gencode"_
 	* reference type - only specified if both genome and fasta are GENCODE 
 	* if other than GENCODE, provide ""
 7. fastaType: _Name for fasta type_
 	* ex: "isoseq"
-	* **Specify which FASTA files to use as indexes**
 8. genome_fastaFiles: _Path to genome file_
 	* **Must be zipped!**
 9. transcriptome_fastaFiles: _Path to transcriptome file_

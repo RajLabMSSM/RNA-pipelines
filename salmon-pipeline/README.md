@@ -1,10 +1,10 @@
 
 ---
-#Salmon 
+# Salmon 
 ---
 This is a pipeline to run Salmon to quantify transcript abundances from RNA-seq data [Salmon git](https://combine-lab.github.io/salmon/about/)
 
-##Input files
+## Input files
 
 ---
 
@@ -23,14 +23,13 @@ Threads: _Specify threads to run, recommended is 10_
 	* if other than GENCODE, provide ""
 7. fastaType: _Name for fasta type_
 	* ex: "isoseq"
-**Specify which FASTA files to use as indexes**
-# can use multiple indexes
+	* **Specify which FASTA files to use as indexes**
 8. genome_fastaFiles: _Path to genome file_
-**_Must be zipped!_**
+	* **Must be zipped!**
 9. transcriptome_fastaFiles: _Path to transcriptome file_
 	* fasta.gz or fa.gz format
 
-##Output files
+## Output files
 
 ---
 

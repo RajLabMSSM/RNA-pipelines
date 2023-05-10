@@ -15,6 +15,8 @@ inFolder = config['inFolder']
 
 #output folder of counts 
 outFolder = config['outFolder']
+
+#cohort name
 #cohort = outFolder.split('/',9)[8]
 cohort = config['cohort']
 
@@ -100,7 +102,7 @@ rule salmon_collate:
         outFolder  + "/{cohort}_{fasta}_salmon_counts.RData"
     shell:
         "ml R/3.6.0;"
-        "Rscript {params.script} {outFolder} {wildcards.fasta}"
+        "Rscript {params.script} {outFolder} {wildcards.fasta} {cohort}"
 
 
 rule salmon_tpm:
@@ -114,4 +116,4 @@ rule salmon_tpm:
        outFolder + "/tpms/{cohort}/{cohort}_transcript_tpm.tsv"
     shell: 
        "ml R/3.6.0;"
-       "Rscript {params.script} {outFolder} {annotations} {input}"
+       "Rscript {params.script} {outFolder} {annotations} {input} {cohort}"

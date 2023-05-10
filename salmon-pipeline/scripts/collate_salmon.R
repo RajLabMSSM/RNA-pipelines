@@ -8,8 +8,9 @@
 args <- commandArgs(trailingOnly=TRUE)
 outFolder <- args[1]
 index <- args[2]
+cohort <- args[3]
 
-cohort <- stringr::str_split_fixed(outFolder, "/", 9)[,9]
+#cohort <- stringr::str_split_fixed(outFolder, "/", 9)[,9]
 print(cohort)
 
 library(tximport)

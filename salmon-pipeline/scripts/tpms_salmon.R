@@ -20,7 +20,8 @@ print(annotations)
 matrixData <- args[3]
 print(matrixData)
 
-cohort <- stringr::str_split_fixed(outFolder, "/", 9)[,9]
+cohort <- args[4]
+#cohort <- stringr::str_split_fixed(outFolder, "/", 9)[,9]
 print(cohort)
 
 

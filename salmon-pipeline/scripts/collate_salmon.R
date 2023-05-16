@@ -24,7 +24,11 @@ tx_files <- list.files(path = outFolder, pattern = "quant.sf", full.names = TRUE
 # take just those within the provided index folder
 tx_files <- tx_files[ grepl(index, tx_files) ]
 print(tx_files[1:20])
-sample_ids <- stringr::str_split_fixed(tx_files, "/", 12)[,10]
+
+sample_ids_split <- strsplit(tx_files, outFolder)
+sample_ids <- sapply(sample_ids_split,function(x) x[2])
+sample_ids <- sapply(strsplit(sample_ids, "/"),function(x) x[2])
+#sample_ids <- stringr::str_split_fixed(tx_files, "/", 12)[,10]
 print(sample_ids[1:20])
 
 
@@ -39,11 +43,19 @@ if(length(tx_files) > 0){
   
   tx_counts <- data.frame(tx_matrix$counts, check.names = F)
   tx_tpm <- data.frame(tx_matrix$abundance, check.names = F)
+
+  tx_counts <- tibble::rownames_to_column(tx_counts, "transcript_id")
+  transcript_id <- sapply(strsplit(as.vector(tx_counts[,"transcript_id"]), "\\|"), function(x) x[1])
+  tx_counts <- cbind(data.frame(transcript_id), subset(tx_counts, select = -c(transcript_id)))
+
+  tx_tpm <- tibble::rownames_to_column(tx_tpm, "transcript_id")
+  transcript_id <- sapply(strsplit(as.vector(tx_counts[,"transcript_id"]), "\\|"), function(x) x[1])
+  tx_tpm <- cbind(data.frame(transcript_id), subset(tx_tpm, select = -c(transcript_id)))
   
-  names(tx_counts) <- sample_ids
-  names(tx_tpm) <- sample_ids
+  #names(tx_counts) <- sample_ids
+  #names(tx_tpm) <- sample_ids
  
- # names(tx_matrix$infReps) <- sample_ids
+  #names(tx_matrix$infReps) <- sample_ids
  
   save(tx_counts, tx_tpm, sample_ids, file = paste0(outFolder,"/", cohort , "_", index, "_salmon_counts.RData"))
 

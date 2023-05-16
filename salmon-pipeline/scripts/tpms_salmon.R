@@ -24,16 +24,27 @@ cohort <- args[4]
 #cohort <- stringr::str_split_fixed(outFolder, "/", 9)[,9]
 print(cohort)
 
+#make_directory <- function(path){
+#  if (!dir.exists(path)){
+#    dir.create(path)
+#  }else{
+#    print("dir exists")
+#  }
+#}
+
+#make_directory(paste0(outFolder, "/tpms/"))
+
 
 #find Rdata file 
 #matrixData <- list.files(path = outFolder, pattern = ".Rdata",full.names = TRUE, recursive = TRUE)
 load(matrixData)
 
 #annotaions file
-annotations <- read_table2(annotations)
+#annotations <- read_table2(annotations)
+annotations <- rtracklayer::import(annotations)
 annotations <- as.data.frame(annotations)
-names(annotations)[4] <- "transcript_id"
-names(annotations)[5] <- "gene_id"
+#names(annotations)[4] <- "transcript_id"
+#names(annotations)[5] <- "gene_id"
 
 gene_id <- annotations$gene_id 
 transcript_id <- annotations$transcript_id

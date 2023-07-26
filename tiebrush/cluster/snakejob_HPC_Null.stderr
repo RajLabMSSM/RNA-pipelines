@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/sc/arion/projects/als-omics/conda/envs/snakemake/bin/snakemake", line 10, in <module>
+    sys.exit(main())
+  File "/sc/arion/projects/als-omics/conda/envs/snakemake/lib/python3.6/site-packages/snakemake/__init__.py", line 2876, in main
+    conda_base_path=args.conda_base_path,
+  File "/sc/arion/projects/als-omics/conda/envs/snakemake/lib/python3.6/site-packages/snakemake/__init__.py", line 406, in snakemake
+    configs = [load_configfile(f) for f in cluster_config]
+  File "/sc/arion/projects/als-omics/conda/envs/snakemake/lib/python3.6/site-packages/snakemake/__init__.py", line 406, in <listcomp>
+    configs = [load_configfile(f) for f in cluster_config]
+  File "/sc/arion/projects/als-omics/conda/envs/snakemake/lib/python3.6/site-packages/snakemake/io.py", line 1618, in load_configfile
+    config = _load_configfile(configpath)
+  File "/sc/arion/projects/als-omics/conda/envs/snakemake/lib/python3.6/site-packages/snakemake/io.py", line 1583, in _load_configfile
+    obj = open(configpath_or_obj, encoding="utf-8")
+FileNotFoundError: [Errno 2] No such file or directory: 'cluster.yaml'

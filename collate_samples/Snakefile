@@ -1,6 +1,7 @@
 
 # Snakemake pipeline for combining data from multiple samples together
 R_VERSION="R/3.6.0" # R 4.0.3 doesn't work for some reason
+shell.prefix('ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge;')
 
 # where the scripts are - default within the pipeline folder
 scriptFolder = "scripts/"
@@ -24,7 +25,7 @@ rule all:
     input: 
         outFolder + "gene_matrix.RData",
         outFolder + "tx_matrix.RData",
-        #outFolder + "multiqc_report.html"
+        outFolder + "multiqc_report.html"
 #       outFolder + "genes_counts_deseq.RData",
         #outFolder + "genes_counts_voom.RData"
 
@@ -46,9 +47,8 @@ rule multiQC:
     params:
         out = outFolder + ""
     shell:
-        #"export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
+        "export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8;"
         #"export PS1=""; source activate snakemake;"
-        "export PS1=""; ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge;"
         "conda activate snakemake; multiqc  -f --outdir {params.out} {inFolder}"
 
         #"/hpc/packages/minerva-centos7/py_packages/3.7/bin/"

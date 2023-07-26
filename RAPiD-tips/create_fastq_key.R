@@ -13,6 +13,7 @@ endName2 <- opt$endName2
 # read in folder full of FASTQ files and produce a table 
 # split out sample name and find R1 and R2
 fq <- list.files(inFolder, full.names =  TRUE)
+fq <- fq[!grepl("md5", fq)]
 # ORIG CODE
 #sample <- basename(stringr::str_split_fixed(fq, "_", 4)[,1])
 

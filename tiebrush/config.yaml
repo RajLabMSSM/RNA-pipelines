@@ -1,0 +1,7 @@
+samples:
+    - 306-TDPminus
+    - 306-TDPplus
+    - 344-TDPminus
+    - 344-TDPplus
+outFolder:
+    "/sc/arion/projects/als-omics/TDP_sorting/tiebrush/"

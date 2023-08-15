@@ -1,16 +1,16 @@
 # run tiebrush and tiecov on list of samples
-
+# Jack Humphrey 2023
 samples = config["samples"]
 outFolder = config["outFolder"]
 
 tb_folder = "/sc/arion/projects/ad-omics/data/software/tiebrush"
 
-shell.prefix('ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge;')
+#shell.prefix('ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge;')
 
 
 rule all:
     input:
-        expand( outFolder + "{sample}.tiebrush.{ext}", sample = samples, ext = ["bam", "bam.bai", "bigwig", "junc"])
+        expand( outFolder + "{sample}.tiebrush.{ext}", sample = samples, ext = ["bam", "bam.bai", "bigwig", "junc.bed"])
 
 rule tiebrush:
     input:
@@ -30,7 +30,7 @@ rule tiecov:
         bai = outFolder + "{sample}.tiebrush.bam.bai"
     output:
         cov = outFolder + "{sample}.tiebrush.bigwig",
-        junc = outFolder + "{sample}.tiebrush.junc"
+        junc = outFolder + "{sample}.tiebrush.junc.bed"
     shell:
         "ml samtools/1.9;"
         "{tb_folder}/tiecov -W -c {output.cov} -j {output.junc} {input.bam} "

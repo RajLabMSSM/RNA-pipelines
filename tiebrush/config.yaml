@@ -1,7 +1,22 @@
 samples:
-    - 306-TDPminus
-    - 306-TDPplus
-    - 344-TDPminus
-    - 344-TDPplus
-outFolder:
-    "/sc/arion/projects/als-omics/TDP_sorting/tiebrush/"
+ -  EXT16_20_G
+ -  EXT16_20_N
+ -  P6_19_G
+ -  P6_19_N
+ -  P64_11_G
+ -  P64_11_N
+ -  P67_06_G
+ -  P67_06_N
+ -  P70_10_G
+ -  P70_10_N
+ -  P78_06_G
+ -  P78_06_N
+#    - 306-TDPminus
+#    - 306-TDPplus
+#    - 344-TDPminus
+#    - 344-TDPplus
+
+
+outFolder: "/sc/arion/projects/als-omics/Sao_FTD_sorting/tiebrush/"
+#    "/sc/arion/projects/als-omics/TDP_sorting/tiebrush/"
+

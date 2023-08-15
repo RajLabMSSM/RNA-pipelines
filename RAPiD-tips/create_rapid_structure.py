@@ -54,7 +54,8 @@ for f in f1_split:
         f1_exists.append(os.path.isfile(j) )
 
 if not all(f1_exists):
-    print( "missing files!" )
+    print( "missing f1 files!" )
+    print(f1_exists)
     exit()      
 
 # do same for R2

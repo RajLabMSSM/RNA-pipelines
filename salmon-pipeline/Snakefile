@@ -51,7 +51,7 @@ fastaType = config['fastaType']
 salmon = "/sc/arion/projects/ad-omics/data/software/salmon-1.9.0_linux_x86_64/bin/salmon"
 
 # Salmon runs on FASTQS - default behaviour is to use FASTQs listed in metadata for each sample
-mode = "fastq"
+input_mode = config['inputMode']
 # However for some cohorts we didn't keep the FASTQs and only have the BAMs.
 # In this case, we need to convert the BAMs back to FASTQ and run Salmon on them. Then delete those FASTQs.
 # Currently, Bazam is the fastest option but doesn't retain stranding information.
@@ -91,11 +91,11 @@ rule salmon_quant:
     output:
         quant = outFolder + "/{sample}/{fasta}/salmon_quant/quant.sf"
     run: 
-        if mode == "fastq":
+        if input_mode == "fastq":
             r1_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1"])
             r2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2"])
         # bam mode - convert bam to fastq and then align those
-        if mode == "bam":
+        if input_mode == "bam":
             bam_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["BAM"])
             r1_file = os.path.join("/tmp", wildcards.sample + "_R1.fastq.gz")
             r2_file = os.path.join("/tmp",wildcards.sample + "_R2.fastq.gz")

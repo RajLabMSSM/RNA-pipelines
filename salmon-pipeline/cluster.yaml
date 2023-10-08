@@ -20,3 +20,7 @@ salmon_collate:
   time: '720'
   cores: 8
   mem: 6000
+salmon_tpm:
+  time: '720'
+  cores: 8
+  mem: 6000

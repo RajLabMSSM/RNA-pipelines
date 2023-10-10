@@ -53,14 +53,14 @@ df <- as.data.frame(gene_id)
 df$transcript_id <- transcript_id
 
 
-tx_tpm <- tibble::rownames_to_column(tx_tpm, "transcript_id")
-tx_counts <- tibble::rownames_to_column(tx_counts, "transcript_id")
+#tx_tpm <- tibble::rownames_to_column(tx_tpm, "transcript_id")
+#tx_counts <- tibble::rownames_to_column(tx_counts, "transcript_id")
 
-tx_tpm_outFile <- paste0(outFolder, "/tpms/", cohort, "/", cohort, "_transcript_tpm.tsv")
+tx_tpm_outFile <- paste0(outFolder, "/tpms/", cohort, "_transcript_tpm.tsv")
 write_tsv(tx_tpm, path = tx_tpm_outFile )
 #readr::write_tsv(tx_tpm, "outFolder/tpms/{cohort}/{cohort}_transcript_tpm.tsv")
 
-tx_counts_outFile <- paste0(outFolder, "/tpms/", cohort, "/", cohort, "_transcript_counts.tsv")
+tx_counts_outFile <- paste0(outFolder, "/tpms/", cohort, "_transcript_counts.tsv")
 write_tsv(tx_counts, path = tx_counts_outFile )
 #readr::write_tsv(tx_counts, "outFolder/tpms/{cohort}/{cohort}_transcript_counts.tsv")
 

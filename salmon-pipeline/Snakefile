@@ -30,7 +30,7 @@ IndexOutFolder = config['IndexOutFolder']
 #path to metadata
 metadata = config['metadata']
 #reading in metadata
-meta = pd.read_csv(metadata, sep = ';')
+meta = pd.read_csv(metadata, sep = '\t')
 #sample names into variable
 samples = meta['sample']
 #creating index using sample names
@@ -49,6 +49,13 @@ refType = config['refType']
 fastaType = config['fastaType']
 
 salmon = "/sc/arion/projects/ad-omics/data/software/salmon-1.9.0_linux_x86_64/bin/salmon"
+
+# Salmon runs on FASTQS - default behaviour is to use FASTQs listed in metadata for each sample
+input_mode = config['inputMode']
+# However for some cohorts we didn't keep the FASTQs and only have the BAMs.
+# In this case, we need to convert the BAMs back to FASTQ and run Salmon on them. Then delete those FASTQs.
+# Currently, Bazam is the fastest option but doesn't retain stranding information.
+
 
 rule all:
     input:
@@ -84,13 +91,31 @@ rule salmon_quant:
     output:
         quant = outFolder + "/{sample}/{fasta}/salmon_quant/quant.sf"
     run: 
-        r1_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1"])
-        #r1_2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1_2"])
-        r2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2"])
-        #r2_2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2_2"])
+        if input_mode == "fastq":
+            r1_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R1"])
+            r2_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["R2"])
+        # bam mode - convert bam to fastq and then align those
+        if input_mode == "bam":
+            bam_file = os.path.join(inFolder, metadata_dict[wildcards.sample]["BAM"])
+            r1_file = os.path.join(outFolder, wildcards.sample + "_R1.fastq")
+            r2_file = os.path.join(outFolder, wildcards.sample + "_R2.fastq")
+            # bazam
+            #shell("bazam -bam {bam_file} -r1 {r1_file} -r2 {r2_file}")
+            # picard
+            shell("ml picard; java -Xmx70000m -jar $PICARD SamToFastq \
+                I={bam_file} \
+                FASTQ={r1_file} \
+                SECOND_END_FASTQ={r2_file}")
+
+            shell("ml pigz; pigz -p 16 {r1_file}")
+            shell("ml pigz; pigz -p 16 {r2_file}")
+            r1_file = r1_file + ".gz"
+            r2_file = r2_file + ".gz"
 
         shell("{salmon} quant -i {params.transcripts_index} \
-        -l {params.stranded}  -1 {r1_file} -2 {r2_file} --seqBias --gcBias --posBias --validateMappings -o {params.quantOutFolder} ")
+            -l {params.stranded}  -1 {r1_file} -2 {r2_file} \
+            --seqBias --gcBias --posBias --validateMappings -o {params.quantOutFolder} ")
+
 
 rule salmon_collate:
     input:

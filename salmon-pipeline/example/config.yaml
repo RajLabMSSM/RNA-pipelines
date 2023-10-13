@@ -39,3 +39,7 @@ genome_fastaFiles:
    gencodev38: "/path/to/genome/hg38.fa.gz"
 transcriptome_fastaFiles:
    gencodev38: "/path/to/transcriptome/gencode.v38.transcripts.fa.gz"
+
+# If inputMode is fastq - use FASTQs in R1 and R2 column
+# If inputMode is bam - use BAM file in BAM column, convert back to FASTQ then quantify
+inputMode: "fastq"

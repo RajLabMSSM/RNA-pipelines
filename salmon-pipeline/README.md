@@ -12,7 +12,7 @@ You will need to provide the following parameters in your config.yaml file:
 1. inFolder: _Path to fastq data_ 
 2. outFolder: _Folder for where to output the abundance estimates_
 3. IndexOutFolder: _Folder for where to put the Salmon index_
-4. metadata: _A dataframe containing 3 columns: list of sample IDs to use, in format of columns sample, R1, R2_
+4. metadata: _A dataframe containing 3 columns: list of sample IDs to use, in format of columns sample, R1, R2_ - this should be tab-separated.
 	* Sample_1, sample1_R1.fastq, sample1_R2.fastq
 5. Annotation file: _GTF file_ 
 6. stranded: _The way the library was prepared, use "A" for salmon to infer_

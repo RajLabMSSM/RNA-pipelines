@@ -1,0 +1,66 @@
+# snakemake pipeline for converting BAMs to FASTQs
+# now with Picard instead of Bazam
+# Jack Humphrey
+#
+
+#import pandas as pd
+#samples = pd.read_csv(metadata, sep = '\t')['sample']
+
+inFolder = config['inFolder']
+outFolder = config['outFolder']
+bamSuffix = config['bamSuffix']
+
+# assume most data is paired by default
+if "paired" not in config.keys():
+    config["paired"] = True
+
+paired = config["paired"]
+if paired == False:
+    pair_list = [""]
+if paired == True:
+    pair_list = ["R1.","R2."]
+
+# get BAM files from inFolder using glob
+import glob
+import os
+# potential improvement - go deeper with glob if no bam files are in inFolder
+samples = [os.path.basename(x).strip(bamSuffix) for x in glob.glob(inFolder + "/*" + bamSuffix)]
+
+#print(samples)
+#print(bamSuffix)
+
+shell.prefix('export PS1=""; ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge; conda activate snakemake;')
+
+
+rule all:
+    input:
+        expand(outFolder + "{sample}.{pair}fastq.gz", sample = samples, pair = pair_list)
+
+rule indexBam:
+    input: 
+        bam = inFolder + '{sample}' + bamSuffix
+    output:
+        bai = inFolder + '{sample}' + bamSuffix + ".bai"
+    shell:
+        "ml samtools;samtools index {input.bam}"
+
+rule bam_to_fastq_paired:
+    input:
+        bam = inFolder + '{sample}' + bamSuffix,
+        bai = inFolder + '{sample}' + bamSuffix + ".bai"
+    output:
+        r1_fastq = outFolder + '{sample}.R1.fastq.gz',
+        r2_fastq = outFolder + '{sample}.R2.fastq.gz'
+    shell:
+        "ml picard;"
+        "java -jar $PICARD SamToFastq I={input.bam} FASTQ={output.r1_fastq} SECOND_END_FASTQ={output.r2_fastq}"
+
+rule bam_to_fastq_single:
+    input:
+        bam = inFolder + '{sample}' + bamSuffix,
+        bai = inFolder + '{sample}' + bamSuffix + ".bai"
+    output:
+        r1_fastq = outFolder + '{sample}.fastq.gz'
+    shell:
+        "ml picard;" 
+        "java -jar $PICARD SamToFastq I={input.bam} FASTQ={output.r1_fastq}"

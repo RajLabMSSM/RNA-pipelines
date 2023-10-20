@@ -1,0 +1,4 @@
+inFolder: "test/"
+outFolder: "test/"
+bamSuffix: ".bam"
+paired: True

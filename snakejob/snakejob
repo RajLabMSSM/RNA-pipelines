@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # -m {cluster.partition}"
-source activate snakemake
+
+export PS1=""
+ml anaconda3/2020.11
+CONDA_BASE=$(conda info --base)
+source $CONDA_BASE/etc/profile.d/conda.sh
+conda activate snakemake
+#source activate snakemake
 set -e
 
 if [ ! -d "cluster" ]; then

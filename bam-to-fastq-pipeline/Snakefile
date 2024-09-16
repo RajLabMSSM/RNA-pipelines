@@ -24,10 +24,10 @@ if paired == True:
 import glob
 import os
 # potential improvement - go deeper with glob if no bam files are in inFolder
-samples = [os.path.basename(x).strip(bamSuffix) for x in glob.glob(inFolder + "/*" + bamSuffix)]
+samples = [os.path.basename(x).replace(bamSuffix, "") for x in glob.glob(inFolder + "/*" + bamSuffix)]
 
-#print(samples)
-#print(bamSuffix)
+print(samples)
+print(bamSuffix)
 
 shell.prefix('export PS1=""; ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge; conda activate snakemake;')
 
@@ -42,7 +42,7 @@ rule indexBam:
     output:
         bai = inFolder + '{sample}' + bamSuffix + ".bai"
     shell:
-        "ml samtools;samtools index {input.bam}"
+        'ml samtools;samtools index "{input.bam}" '
 
 rule bam_to_fastq_paired:
     input:
@@ -52,8 +52,8 @@ rule bam_to_fastq_paired:
         r1_fastq = outFolder + '{sample}.R1.fastq.gz',
         r2_fastq = outFolder + '{sample}.R2.fastq.gz'
     shell:
-        "ml picard;"
-        "java -jar $PICARD SamToFastq I={input.bam} FASTQ={output.r1_fastq} SECOND_END_FASTQ={output.r2_fastq}"
+        'ml picard;'
+        'java -jar $PICARD SamToFastq I="{input.bam}" FASTQ="{output.r1_fastq}" SECOND_END_FASTQ="{output.r2_fastq}"'
 
 rule bam_to_fastq_single:
     input:
@@ -62,5 +62,5 @@ rule bam_to_fastq_single:
     output:
         r1_fastq = outFolder + '{sample}.fastq.gz'
     shell:
-        "ml picard;" 
-        "java -jar $PICARD SamToFastq I={input.bam} FASTQ={output.r1_fastq}"
+        'ml picard;'
+        'java -jar $PICARD SamToFastq I="{input.bam}" FASTQ="{output.r1_fastq}"'

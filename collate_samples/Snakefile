@@ -1,6 +1,6 @@
 
 # Snakemake pipeline for combining data from multiple samples together
-R_VERSION="R/3.6.0" # R 4.0.3 doesn't work for some reason
+R_VERSION="R" # R 4.0.3 doesn't work for some reason
 shell.prefix('ml anaconda3; CONDA_BASE=$(conda info --base); source $CONDA_BASE/etc/profile.d/conda.sh; ml purge;')
 
 # where the scripts are - default within the pipeline folder

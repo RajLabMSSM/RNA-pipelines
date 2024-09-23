@@ -53,7 +53,7 @@ rule bam_to_fastq_paired:
         r2_fastq = outFolder + '{sample}.R2.fastq.gz'
     shell:
         'ml picard;'
-        'java -jar $PICARD SamToFastq VALIDATION_STRATEGY=SILENT I="{input.bam}" FASTQ="{output.r1_fastq}" SECOND_END_FASTQ="{output.r2_fastq}"'
+        'java -jar $PICARD SamToFastq VALIDATION_STRINGENCY=SILENT I="{input.bam}" FASTQ="{output.r1_fastq}" SECOND_END_FASTQ="{output.r2_fastq}"'
 
 rule bam_to_fastq_single:
     input:
@@ -63,4 +63,4 @@ rule bam_to_fastq_single:
         r1_fastq = outFolder + '{sample}.fastq.gz'
     shell:
         'ml picard;'
-        'java -jar $PICARD SamToFastq VALIDATION_STRATEGY=SILENT I="{input.bam}" FASTQ="{output.r1_fastq}"'
+        'java -jar $PICARD SamToFastq VALIDATION_STRINGENCY=SILENT I="{input.bam}" FASTQ="{output.r1_fastq}"'

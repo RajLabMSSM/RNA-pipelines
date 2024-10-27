@@ -42,8 +42,8 @@ if(length(tx_files) > 0){
   tx_counts <- data.frame(tx_matrix$counts, check.names = F)
   tx_tpm <- data.frame(tx_matrix$abundance, check.names = F)
   
-  names(tx_counts) <- gsub(".tx.results", "", basename(tx_files))
-  names(tx_tpm) <- gsub(".tx.results", "", basename(tx_files))
+  names(tx_counts) <- gsub(".isoforms.results", "", basename(tx_files))
+  names(tx_tpm) <- gsub(".isoforms.results", "", basename(tx_files))
   
   
   save(tx_counts, tx_tpm, file = paste0(outFolder, "tx_matrix.RData"))

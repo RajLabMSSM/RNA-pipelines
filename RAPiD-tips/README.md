@@ -95,8 +95,11 @@ Please keep in mind the folowing important options when submitting the job:
 
 `-q` - we suggest using the `long` queue.
 
+## updated in October 2025 to use Minerva-wide version of RAPiD
+
 ```
-bsub -I -n 2 -W 144:00 -q long -P <account_code> -R rusage[mem=3750] -R span[hosts=1] "/sc/arion/projects/H_PBG/nextflow/bin/nextflow run /path/to/RAPiD-nf_1/RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded none -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --kallisto --salmon --trimAdapter NexteraPE-PE --rawPath Raw/Illumina -resume
+bsub -I -n 2 -W 144:00 -q long -P <account_code> -R rusage[mem=3750] -R span[hosts=1] "ml nextflow/19.10.0; nextflow run  /path/to/RAPiD-nf_1/RAPiD.nf --run `pwd` --genome GRCh38.Gencode.v30 --stranded none -profile chimera --qc --fastqc --leafcutter --featureCounts --rsem --kallisto --salmon --trimAdapter NexteraPE-PE --rawPath Raw/Illumina -resume
+
 ```
 
 

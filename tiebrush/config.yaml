@@ -1,11 +1,9 @@
-samples:
- - CTR_1
- - CTR_2
- - CTR_3
- - hnRNPK_1
- - hnRNPK_2
- - hnRNPK_3
-
 #outFolder: "/sc/arion/projects/als-omics/Sao_FTD_sorting/tiebrush/"
 #    "/sc/arion/projects/als-omics/TDP_sorting/tiebrush/"
-outFolder: "/sc/arion/projects/als-omics/hnRNPK/Buratti_SHSY5Y_knockdown/bams/"
+#outFolder: "/sc/arion/projects/als-omics/hnRNPK/Buratti_SHSY5Y_knockdown/bams/"
+#
+inFolder:
+  - "/sc/arion/projects/als-omics/Lee_FACS_TDP/tiebrush/tdp_pos/"
+  - "/sc/arion/projects/als-omics/Lee_FACS_TDP/tiebrush/tdp_neg/"
+
+outFolder: "/sc/arion/projects/als-omics/Lee_FACS_TDP/tiebrush/"

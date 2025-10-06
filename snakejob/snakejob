@@ -2,9 +2,11 @@
 # -m {cluster.partition}"
 
 export PS1=""
-ml anaconda3/2020.11
+ml anaconda3/latest
+#ml anaconda3/2020.11
 CONDA_BASE=$(conda info --base)
 source $CONDA_BASE/etc/profile.d/conda.sh
+#source /hpc/users/$USER/miniconda3/etc/profile.d/conda.sh
 conda activate snakemake
 #source activate snakemake
 set -e
@@ -79,12 +81,13 @@ bsub=("bsub -K -J $jname:{rule}:{wildcards}"
 echo ${bsub[*]}
 
 snakemake -u cluster.yaml --cluster-sync "${bsub[*]}" \
-  --use-conda --cores \
+  --cores \
   --local-cores 4 --max-jobs-per-second 5 \
   --jobs 1000 --quiet \
   --rerun-incomplete \
   --restart-times 3 \
   -s $snakefile --configfile $config \
-  --latency-wait 30 --rerun-incomplete --use-conda \
+  --latency-wait 30 --rerun-incomplete \
+  #--use-conda \
   $dryrun \
   $mode_variable
